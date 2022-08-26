@@ -14,7 +14,7 @@ https://bdcw.org/geneid/rest/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneListStr/
 
 https://bdcw.org/geneid/rest/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneListStr/ITPR3__IL6__KLF4/View/json
 
-Please use __ (double underscore) to specify more than one gene, as in the string ITPR3__IL6__KLF4 in the example above.
+Please use __ (double underscore) to specify more than one gene, as in the string ITPR3__IL6__KLF4 in the example above. For SYMBOL like IDs, the user may specify  SYMBOL_OR_ALIAS for GeneIDType, so that the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS.
 
 ## How to use it in a python program:
 
