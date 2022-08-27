@@ -6,7 +6,7 @@ Given one or more genes, the MetGENE tool identifies the reactions catalyzed by 
 The results are presented as a table, with the metabolite names hyperlinked to MW RefMet page (or to the corresponding KEGG entry in the absence of a RefMet name) for the metabolite, reaction hyperlinked to its KEGG entry and MW studies hyperlinked to their respective pages. The user also has access to the studies statistics via MW MetStat. Further, the user has the option to select more than one metabolite to list only those studies in which all the selected metabolites appear and can download the table as a text, HTML or JSON file. 
 
 The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGENE">MetGENE</a> and also as a REST API 
-(<a href="https://smart-api.info/ui/342e4cec92030d74efd84b61650fb0ea">SmartAPI for Gene ID Conversion</a>). The SmartAPI page provides an explanation of the various parameters.
+(<a href="https://smart-api.info/ui/342e4cec92030d74efd84b61650fb0ea">SmartAPI for MetGENE</a>). The SmartAPI page provides an explanation of the various parameters.
 
 ## For API-based access to integrate in user’s existing tools:
 
