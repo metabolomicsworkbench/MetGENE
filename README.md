@@ -1,23 +1,45 @@
-# GeneIDConversion
-Conversion of one type of gene ID (such as SYMBOL or ENTREZ gene ID) into other types of IDs (such as ENSEMBL or UNIPROT)
+# MetGENE
+A tool for extraction of gene-centric information from Metabolomics Workbench DCC
 
-Genomic and gene expression data is integral to biomolecular data analysis. The types of identifiers used for genes differ across different resources providing such data sets. The ability to use a single type of gene identifier is imperative for integrating data from two or more resources. This gene ID conversion tool facilitates the use of a common gene identifier. A <a href="https://bdcw.org/MW/docs/geneid_conversion_20220822.pdf">tutorial</a> provides an overview and the steps of how to use this tool.
+Given one or more genes, the MetGENE tool identifies the reactions catalyzed by the corresponding protein(s) and the related metabolites; gene ID conversion is also performed. For each metabolite, the studies containing the metabolite are identified from the [Metabolomics Workbench (MW)](https://www.metabolomicsworkbench.org/) Data Coordination Center (DCC) of [NIH Common Fund Data Ecosystem (CFDE)](https://commonfund.nih.gov/dataecosystem).
 
-This tool is available through the web at https://bdcw.org/geneid/geneidconv.php Gene ID Conversion</a> and also as a REST API 
-(<a href="https://smart-api.info/ui/e712b9eb07e637a00ae468f757ce2a1f">SmartAPI for Gene ID Conversion</a>). The SmartAPI page provides an explanation of the various parameters.
+The results are presented as a table, with the metabolite names hyperlinked to MW RefMet page (or to the corresponding KEGG entry in the absence of a RefMet name) for the metabolite, reaction hyperlinked to its KEGG entry and MW studies hyperlinked to their respective pages. The user also has access to the studies statistics via MW MetStat. Further, the user has the option to select more than one metabolite to list only those studies in which all the selected metabolites appear and can download the table as a text, HTML or JSON file. 
+
+The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGENE">MetGENE</a> and also as a REST API 
+(<a href="https://smart-api.info/ui/342e4cec92030d74efd84b61650fb0ea">SmartAPI for Gene ID Conversion</a>). The SmartAPI page provides an explanation of the various parameters.
 
 ## For API-based access to integrate in user’s existing tools:
 
-URLs to use for json output with CLI (e.g., using [curl -L 'URL']; use /View/txt for text output):
+URLs to use for json output with CLI (e.g., using [curl -L 'URL']; use /viewType/txt for text output):
 
-https://bdcw.org/geneid/rest/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneListStr/AIM1/View/json
+Reactions:
+https://bdcw.org/MetGENE/rest/reactions/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
-https://bdcw.org/geneid/rest/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneListStr/ITPR3__IL6__KLF4/View/json
+Metabolites:
+https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/txt
 
-Please use __ (double underscore) to specify more than one gene, as in the string ITPR3__IL6__KLF4 in the example above. For SYMBOL like IDs, the user may specify  SYMBOL_OR_ALIAS for GeneIDType, so that the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS.
+Studies:
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
-## How to use it in a python program:
+Please use __ (double underscore) to specify more than one gene, as in the string HK1__PNPLA3. For SYMBOL like IDs, the user may specify SYMBOL_OR_ALIAS for GeneIDType, so that, for gene ID conversion, the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS.
 
-A python script provides an example of how to use the gene ID conversion tool. At the core, a URL-based query is constructed and executed using python packages “requests” and “bs4” (function “BeutifulSoup”). After some processing, the results are available as a pandas dataframe.
+## Examples of API URL for a summary page:
 
-Example python script: https://bdcw.org/geneid/fetch_php_page.py
+1. Single gene case (Default tab view): 
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&ENSEMBL=ENSG00000000419&viewType=all
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=ALDOB&GeneID=229
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE&GeneID=6120&viewType=PIE
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE&GeneID=6120&viewType=BAR
+
+2. Multiple genes case: 
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=PIE
+
+https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=BAR
+
