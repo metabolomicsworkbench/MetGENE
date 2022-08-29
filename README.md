@@ -1,5 +1,5 @@
 # MetGENE
-A tool for extraction of gene-centric information from Metabolomics Workbench DCC
+A tool for extraction of gene-centric information from the Metabolomics Workbench
 
 Given one or more genes, the MetGENE tool identifies associations between the gene(s) and the metabolites that are biosynthesized, metabolized, or transported by proteins coded by the genes. The gene(s) link to metabolites, the chemical transformations involving the metabolites through gene-specified proteins/enzymes, the functional association of these gene-associated metabolites and the pathways involving these metabolites.
 
