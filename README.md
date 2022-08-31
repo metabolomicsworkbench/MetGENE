@@ -1,7 +1,9 @@
 # MetGENE
 A tool for extraction of gene-centric information from the Metabolomics Workbench
 
-Given one or more genes, the MetGENE tool identifies associations between the gene(s) and the metabolites that are biosynthesized, metabolized, or transported by proteins coded by the genes. The gene(s) link to metabolites, the chemical transformations involving the metabolites through gene-specified proteins/enzymes, the functional association of these gene-associated metabolites and the pathways involving these metabolites.
+[MetGENE tutorial](https://bdcw.org/MW/docs/MetGENETutorial.pdf)
+
+Given one or more genes, the MetGENE tool identifies associations between the gene(s) and the metabolites that are biosynthesized, metabolized, or transported by proteins coded by the genes. The gene(s) link to metabolites, the chemical transformations involving the metabolites through gene-specified proteins/enzymes, the functional association of these gene-associated metabolites and the pathways involving these metabolites. 
 
 The user can specify the gene using a multiplicity of IDs and gene ID conversion tool translates these into harmonized IDs that are basis at the computational end for metabolite associations. Further, all studies involving the metabolites associated with the gene-coded proteins, as present in the [Metabolomics Workbench (MW)](https://www.metabolomicsworkbench.org/), the portal for the NIH Common Fund National Metabolomics Data Repository (NMDR), will be accessible to the user through the portal interface. The user can begin her/his journey from the [NIH Common Fund Data Ecosystem (CFDE) portal](https://app.nih-cfde.org/chaise/recordset/#1/CFDE:gene@sort(nid)). 
 
