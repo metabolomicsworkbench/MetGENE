@@ -40,7 +40,7 @@ Please use __ (double underscore) or comma (,) to specify more than one gene, as
 
 ## Examples of API URL for a summary page:
 
-1. Single gene case (Default tab view): 
+1. Single gene case (Default tab view): Either specify both Gene Symbol and Gene ID (ENTREZ), or specify ENSEMBL ID.
 
 https://bdcw.org/MetGENE/mgSummary.php?species=hsa&ENSEMBL=ENSG00000000419&viewType=all
 
