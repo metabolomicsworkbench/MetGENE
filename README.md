@@ -12,6 +12,8 @@ The data from MW studies are presented as table(s), with the metabolite names hy
 The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGENE">MetGENE</a> and also as a REST API 
 (<a href="https://smart-api.info/ui/342e4cec92030d74efd84b61650fb0ea">SmartAPI for MetGENE</a>). The SmartAPI page provides an explanation of the various parameters.
 
+The MetGENE tool has been also registered at <a href="https://scicrunch.org/resources/data/record/nlx_144509-1/SCR_023402/resolver?q=SCR_023402&l=SCR_023402&i=rrid:scr_023402">SciCrunch RRID Portal</a>: RRID:SCR_023402.
+
 ## For REST API-based access to integrate in user’s existing tools:
 
 URLs to use for json output with CLI (e.g., using [curl -L 'URL']; use /viewType/txt for text output):
