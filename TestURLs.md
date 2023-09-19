@@ -42,7 +42,7 @@ https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/
 
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/PNPLA3/anatomy/Blood/disease/Diabetes/phenotype/NA/viewType/json
 
-Please use __ (double underscore) or comma (,) to specify more than one gene, as in the string HK1__PNPLA3 or HK1,RPE. For SYMBOL like IDs, the user may specify SYMBOL_OR_ALIAS for GeneIDType, so that, for gene ID conversion, the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS.
+Please use __ (double underscore) or comma (,) to specify more than one gene, as in the string HK1__PNPLA3 or HK1,RPE. For SYMBOL like IDs, the user may specify SYMBOL_OR_ALIAS for GeneIDType, so that, for gene ID conversion, the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS. Also note that, anatomy, disease and phenotype filters are disregarded in summary REST API.
 
 ## Examples of (non-REST) API URL for a summary page:
 
