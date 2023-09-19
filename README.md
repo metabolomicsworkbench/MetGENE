@@ -23,7 +23,7 @@ We also provide the source code so that one can clone this tool and run it local
 While no KEGG license is required to run the web app on user's local computer (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), if the user wishes to provide this tool (or their own tool based on a subset of this tool involving use of KEGG APIs) as a service (see LICENSE), they must obtain their own KEGG license with suitable rights.
 
 ### Faster version of MetGENE
-If the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To acheive this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R. Further, to use the faster version, the user needs to run the R scripts in the 'data' folder. Please see the respective R files in the 'data' folder for how to run them.
+If the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To acheive this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R. Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for how to run them.
 
 ## For REST API-based access to integrate in user’s existing tools:
 
