@@ -44,7 +44,7 @@ https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/
 
 Summary view:
 
-Please note that for the summary view, the filters anatomy, disease and phenotype are required as a placeholder (to maintain the order of the parameter names), but are not used in the actual computation. An important reason for this is that summary results are precomputed for faster processing and the actual use of these filters would have resulted in too many combinations.
+Please note that for the summary view, the filters anatomy, disease and phenotype are required as a placeholder (to maintain the order of the parameter names), but are not used in the actual computation. An important reason for this is that summary results are precomputed for faster processing and the actual use of these filters would have resulted in too many combinations to precompute.
 
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
