@@ -16,7 +16,7 @@ The MetGENE tool has been also registered at <a href="https://scicrunch.org/reso
 
 ## (Upcoming) MetGENE source code (R, php and supporting files)
 
-We also provide the source code so that one can clone this tool and run it locally as a web application. KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html). While no KEGG license is required to run the web app on user's localhost (e.g., access as localhost://install_location/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), if the user wishes to provide this tool as a service (see LICENSE), they must obtain their own KEGG license with suitable rights.
+We also provide the source code so that one can clone this tool and run it locally as a web application. KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html). While no KEGG license is required to run the web app on user's localhost (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), if the user wishes to provide this tool as a service (see LICENSE), they must obtain their own KEGG license with suitable rights.
 
 ## For REST API-based access to integrate in user’s existing tools:
 
