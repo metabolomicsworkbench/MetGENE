@@ -14,6 +14,10 @@ The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGE
 
 The MetGENE tool has been also registered at <a href="https://scicrunch.org/resources/data/record/nlx_144509-1/SCR_023402/resolver?q=SCR_023402&l=SCR_023402&i=rrid:scr_023402">SciCrunch RRID Portal</a>: RRID:SCR_023402.
 
+## (Upcoming) MetGENE source code (R, php and supporting files)
+
+We also provide the source code so that one can clone this tool and run it locally as a web application. KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html). While no KEGG license is required to run the web app on user's localhost (e.g., access as localhost://install_location/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), if the user wishes to provide this tool as a service (see LICENSE), they must obtain their own KEGG license with suitable rights.
+
 ## For REST API-based access to integrate in user’s existing tools:
 
 URLs to use for json output with CLI (e.g., using [curl -L 'URL']; use /viewType/txt for text output):
