@@ -1,12 +1,6 @@
-# MetGENE
-A tool for extraction of gene-centric information from the Metabolomics Workbench
+# URLs to test MetGENE
 
-URLs to test that the MetGENE tool is working well.
-
-The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGENE">MetGENE</a> and also as a REST API 
-(<a href="https://smart-api.info/ui/342e4cec92030d74efd84b61650fb0ea">SmartAPI for MetGENE</a>). The SmartAPI page provides an explanation of the various parameters.
-
-# On bdcw.org
+# Test on bdcw.org
 
 ## For REST API-based access to integrate in user’s existing tools:
 
@@ -61,7 +55,7 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=BAR
 
 
-# On sc-cfdewebdev.sdsc.edu
+# Test on sc-cfdewebdev.sdsc.edu
 
 ## For REST API-based access to integrate in user’s existing tools:
 
