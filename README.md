@@ -104,4 +104,5 @@ Rscript extractMWGeneSummary.R hsa 6120 RPE foo.png json > summaryInfo.json
 The json file can be used for downstream analysis. For example, in R, the file reactionInfo.json can read as a data.frame using the following code after starting R (> denotes R prompt):
 
 &#62;library(jsonlite)
+
 &#62;x=fromJSON("reactionInfo.json", simplifyVector = TRUE)
