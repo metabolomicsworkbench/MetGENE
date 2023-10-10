@@ -83,6 +83,16 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 
 ## Examples of running MetGENE from command prompt:
 
+### How to clone the MetGENE repo:
+
+Assuming git command is installede, on linux or windows commond prompt, type:
+
+git clone https://github.com/metabolomicsworkbench/MetGENE.git MetGENE
+
+The repo will be cloned into the MetGENE folder. Do:
+
+cd MetGENE
+
 Some features of MetGENE can be used from the command prompt via Rscript. These work for only one gene at a time. To use the command line, please make sure you have installed R along with the necessary packages listed below (some may be part of base installation):
 
 tictoc, curl, data.table, dplyr, ggplot2, ggrepel, httr, jsonlite, KEGGREST, plyr, reshape2, rlang, rvest, stringi, stringr, textutils, tidyr, tidyverse, tuple, utils, xtable
