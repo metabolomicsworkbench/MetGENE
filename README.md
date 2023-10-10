@@ -81,3 +81,27 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 
 https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=BAR
 
+## Examples of running MetGENE from command prompt:
+
+Some features of MetGENE can be used from the command prompt via Rscript. These work for only one gene at a time. To use the command line, please make sure you have installed R along with the necessary packages listed below (some may be part of base installation):
+
+tictoc, curl, data.table, dplyr, ggplot2, ggrepel, httr, jsonlite, KEGGREST, plyr, reshape2, rlang, rvest, stringi, stringr, textutils, tidyr, tidyverse, tuple, utils, xtable
+
+Then, use the following commands and the output of the script can be used elsewhere.
+
+Rscript extractGeneInfoTable.R hsa 3098 sc-cfdewebdev.sdsc.edu > geneInfo.html
+
+Rscript extractPathwayInfo.R hsa 3098 HK1 HomoSapiens > pathwayInfo.html
+
+Rscript extractReactionInfo.R hsa 3098 json > reactionInfo.json
+
+Rscript extractMetaboliteInfo.R hsa 3098 Blood Diabetes json > metabInfo.json
+
+Rscript extractFilteredStudiesInfo.R hsa 3098 Diabetes Blood json > studyInfo.json
+
+Rscript extractMWGeneSummary.R hsa 6120 RPE foo.png json > summaryInfo.json
+
+The json file can be used for downstream analysis. For example, in R, the file reactionInfo.json can read as a data.frame using the following code after starting R (> denotes R prompt):
+
+>library(jsonlite)
+>x=fromJSON("reactionInfo.json", simplifyVector = TRUE)
