@@ -1,0 +1,95 @@
+/* main page layout css file - positions header, leftnav, content, rightnav and footer. */
+#header {
+	margin:0;
+	padding:0;
+}
+
+/* constrain divs for fixed width layouts */
+#constrain, #constrain div.constrain {float:left;}
+/* hide from Mac IE \*/
+#constrain, #constrain div.constrain {float:none;}
+/* end hide from Mac IE */
+/* end constrain divs */
+
+/* #content-journalnav is simply a container for content and journalnav, enabling content to appear before navigation in HTML source. See http://www.positioniseverything.net/ordered-floats.html for more info. */
+#content-journalnav {
+	display:inline; /* gets around IE 5/6 bug that doubles the margin - ignored by all other browsers - details at http://www.positioniseverything.net/explorer/doubled-margin.html */
+	width:79%;
+	float:left;
+	margin-left:1%;
+	border-top:1px solid #fff;/* matches same rule in extranav */
+}
+/* begin clearing styles */
+#content-journalnav:after {
+    content:url(/common/images/clear.gif);
+    display:block; 
+    height:0; 
+    clear:both; 
+    visibility:hidden;
+}
+/* Hides from IE-mac \*/
+* html #content-journalnav {height: 1%;}
+/* End hide from IE-mac */
+/*end clearing styles*/
+
+#journalnav {
+	float:left;
+	width:21%;
+}
+/* begin clearing styles */
+#journalnav:after {
+    content:url(/common/images/clear.gif); 
+    display:block; 
+    height:0; 
+    clear:both; 
+    visibility:hidden;
+}
+/* Hides from IE-mac \*/
+* html #journalnav {height: 1%;}
+/* End hide from IE-mac */
+/*end clearing styles*/
+
+#content {
+	float:right;
+	width:76%;
+	/*margin-left:2%;*/
+	padding-bottom:1em;
+}
+/* begin clearing styles */
+#content:after {
+    content:url(/common/images/clear.gif); 
+    display:block; 
+    height:0; 
+    clear:both; 
+    visibility:hidden;
+}
+/* Hides from IE-mac \*/
+* html #content {height: 1%;}
+/* End hide from IE-mac */
+/*end clearing styles*/
+
+#extranav {
+	display:inline; /* gets around IE 5/6 bug that doubles the margin - ignored by all other browsers - details at http://www.positioniseverything.net/explorer/doubled-margin.html */
+	float:right;
+	width:17%;
+	margin-right:1%;
+	border-top:1px solid #fff;/* deals with spacing bug at top of extranav in older Netscape browsers - PC and Mac NS 6.x to <7.1 */
+}
+/* begin clearing styles */
+#extranav:after {
+    content:url(/common/images/clear.gif); 
+    display:block; 
+    height:0; 
+    clear:both; 
+    visibility:hidden;
+}
+/* Hides from IE-mac \*/
+* html #extranav {height: 1%;}
+/* End hide from IE-mac */
+/*end clearing styles*/
+
+#footer {
+	clear:both;
+	border-top:solid 4px black;
+	padding:0 1%;
+}

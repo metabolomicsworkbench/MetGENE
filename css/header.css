@@ -1,0 +1,112 @@
+body {
+	background: #fff repeat-y 50% 0 !important;
+	margin:0 !important;
+	padding:0 !important;
+}
+
+#constrain {
+	background: #fff  repeat-y 50% 0;
+	padding-bottom: 1px !important;
+	margin-top: 0 !important;
+}
+
+#hdr .login-nav {
+	background-position: left top;
+	background-repeat: no-repeat;
+	min-height: 140px;
+	clear: both;
+	position: relative;
+	width:100%;
+}
+
+/* header navigation */
+#hdr #header-nav {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+	position: absolute;
+	bottom:-2px;
+	border-bottom: 1px solid #fff;
+	left:0;
+	width: 990px; /* dc 02/22/2013 prevent wrapping */
+}
+
+#hdr #header-nav .top-level {
+	background:  no-repeat left top;
+}
+
+#hdr #header-nav li.hilite {
+  background-image: url(/images/tab_l_hilite.gif);
+}
+
+#hdr #header-nav .top-level a.tl-link {
+	/* float: left; 20160707 */
+	background-color: #eeeeee;
+	font-size: 100%;
+	margin-right:2px;
+	padding: 6px 10px;
+	font-weight: normal;
+	text-decoration: none;
+	/* color: green; 20160707 */
+}
+
+#hdr #header-nav .hilite a.tl-link {
+}
+
+#hdr #header-nav a.tl-link:link, #hdr #header-nav a.tl-link:visited {
+	/* color: #2634C6; (un?)visited link 20160707 */
+	color: #215EA9; /* base color */
+	font-weight: bold;
+	padding-top: 4px;
+	padding-bottom: 0px;
+	border-bottom: solid;
+	border-color: #eeeeee;
+}
+
+#hdr #header-nav .hilite a.tl-link:link, #hdr #header-nav .hilite a.tl-link:visited {
+  color: #C56D3D;
+  background-image: url(/images/content_bg.gif);
+}
+
+/* end header navigation */
+
+/*
+#hdr .login-nav .list {
+	position: absolute;
+	right: 18px;
+	bottom: 5px;
+	list-style:none;
+	margin:0;
+	padding:0;
+	font-size:90%;
+	width: 20%;
+	z-index: 2;
+}
+
+#hdr .login-nav .list li {
+	float: right;
+}
+
+#hdr .login-nav .list a {
+	color:#fff;
+	display: block;
+	font-weight:bold;
+	padding: 4px 10px 6px;
+}
+
+#hdr .login-nav .list .li1 a {
+	background: url(/images/twitter_newbird_boxed_whiteonblue_24_24_custom_v2.png) no-repeat left center;
+	padding-left: 24px;
+}
+
+#hdr .login-nav .list .li2 a {
+	background: url(/images/email.gif) no-repeat left center;	
+	padding-left: 22px;
+	padding-right: 3px;
+}
+
+#hdr .login-nav .list .li3 a {
+	background: url(/images/rss.gif) no-repeat left center;	
+	padding-left: 20px;
+}
+*/

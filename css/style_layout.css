@@ -1,0 +1,28 @@
+body #constrain .constrain {max-width:1003px !important;}
+#content-extranav {
+/* 20170420
+	padding-top:60px;
+*/
+	padding-top:32px;
+}
+#content {margin:0;}
+
+/* 96.8 */
+
+#content-journalnav {
+	border-top: none;
+	width: 65.5%;
+	width: 69.8%;
+}
+
+#extranav {
+	border-top: none;
+	overflow: hidden;
+	width: 31.3%;
+	width: 27.0%;
+}
+
+#extranav .container {
+	float: right;
+	width: 100%;
+}
