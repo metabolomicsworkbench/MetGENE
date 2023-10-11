@@ -89,7 +89,7 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 
 ### How to clone the MetGENE repo:
 
-Assuming git command is installede, on linux or windows commond prompt, type:
+Assuming git command is installed, on linux or windows commond prompt, type:
 
 git clone https://github.com/metabolomicsworkbench/MetGENE.git MetGENE
 
