@@ -14,20 +14,33 @@ The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGE
 
 The MetGENE tool has been also registered at <a href="https://scicrunch.org/resources/data/record/nlx_144509-1/SCR_023402/resolver?q=SCR_023402&l=SCR_023402&i=rrid:scr_023402">SciCrunch RRID Portal</a>: RRID:SCR_023402.
 
-## (Upcoming) MetGENE source code (R, php and supporting files)
+## MetGENE source code (R, php and supporting files)
 
 We also provide the source code so that one can clone this tool and run it locally as a web application for their personal use. <b>KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html).</b> 
 
+<b>
+The following scripts use KEGG APIs:<br>
+extractFilteredStudiesInfo.R<br>
+extractMetaboliteInfo.R<br>
+extractMWGeneSummary.R<br>
+extractReactionInfo.R<br>
+data/computeGeneAssociations.R<br>
+data/getCompoundInfoFromKegg.R<br>
+data/getEntrzIDsSymbolsFromKeggLinkDF.R<br>
+data/getKEGGLinkDataForGenes.R<br>
+data/getReactionInfoFromKegg.R
+</b>
+
 ### Using this code to provide user's own web service
 
-While no KEGG license is required to run the web app on user's local computer (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), if the user wishes to provide this tool (or their own tool based on a subset of this tool involving use of KEGG APIs) as a service (see LICENSE), they must obtain their own KEGG license with suitable rights.
+The code we provide is free for non-commercial use (see LICENSE). <b>While it is our understanding that no KEGG license is required to run the web app on user's local computer for personal use (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), the users <u>must</u> understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html) and decide for themselves. For example, if the user wishes to provide this tool (or their own tool based on a subset of this tool involving the scripts with KEGG APIs) as a service (see LICENSE), they <u>must</u> obtain their own KEGG license with suitable rights.</b>
 
 The cache folder should have rwx permission for apache:apache, assuming that the web server runs as the user 'apache'. This can be acheived by the linux command: 
 
 sudo chown -R apache:apache cache
 
 ### Faster version of MetGENE
-If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To acheive this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R. Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for instructions to run them.
+<b>If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To acheive this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R.</b> Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for instructions to run them.
 
 ## For REST API-based access to integrate in user’s existing tools:
 
