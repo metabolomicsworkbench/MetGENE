@@ -1,5 +1,5 @@
 # MetGENE
-A tool for extraction of gene-centric information from the Metabolomics Workbench
+Gene-centric Metabolomics Information Retrieval Tool
 
 [MetGENE tutorial](https://bdcw.org/MW/docs/MetGENETutorial.pdf)
 
@@ -18,7 +18,7 @@ The MetGENE tool has been also registered at <a href="https://scicrunch.org/reso
 
 We also provide the source code so that one can clone this tool and run it locally as a web application for their personal use. 
 
-The cache folder should have rwx permission for apache:apache, assuming that the web server runs as the user 'apache'. This can be acheived by the linux command: 
+The cache folder should have rwx permission for apache:apache, assuming that the web server runs as the user 'apache'. This can be achieved by the linux command: 
 
 sudo chown -R apache:apache cache
 
@@ -43,7 +43,7 @@ data/getReactionInfoFromKegg.R
 The code we provide is free for non-commercial use (see LICENSE). <b>While it is our understanding that no KEGG license is required to run the web app on user's local computer for personal use (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), the users <ins>must</ins> understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html, see also https://www.pathway.jp/en/academic.html) and decide for themselves. For example, if the user wishes to provide this tool (or their own tool based on a subset of this tool involving the scripts with KEGG APIs) as a service (see LICENSE), they <ins>must</ins> obtain their own KEGG license with suitable rights.</b>
 
 ### Faster version of MetGENE
-<b>If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To acheive this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R.</b> Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for instructions to run them.
+<b>If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To achieve this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R.</b> Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for instructions to run them.
 
 ## For REST API-based access to integrate in user’s existing tools:
 
@@ -105,7 +105,7 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 
 ### How to clone the MetGENE repo:
 
-Assuming git command is installed, on linux or windows commond prompt, type:
+Assuming git command is installed, on linux or windows command prompt, type:
 
 git clone https://github.com/metabolomicsworkbench/MetGENE.git MetGENE
 
