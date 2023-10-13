@@ -32,7 +32,6 @@ extractMetaboliteInfo.R<br>
 extractMWGeneSummary.R<br>
 extractReactionInfo.R<br>
 data/getCompoundInfoFromKegg.R<br>
-data/getEntrzIDsSymbolsFromKeggLinkDF.R<br>
 data/getKEGGLinkDataForGenes.R<br>
 data/getReactionInfoFromKegg.R
 </b>
