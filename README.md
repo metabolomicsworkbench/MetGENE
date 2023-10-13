@@ -33,7 +33,7 @@ data/getReactionInfoFromKegg.R
 
 ### Using this code to provide user's own web service
 
-The code we provide is free for non-commercial use (see LICENSE). <b>While it is our understanding that no KEGG license is required to run the web app on user's local computer for personal use (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), the users <u>must</u> understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html) and decide for themselves. For example, if the user wishes to provide this tool (or their own tool based on a subset of this tool involving the scripts with KEGG APIs) as a service (see LICENSE), they <u>must</u> obtain their own KEGG license with suitable rights.</b>
+The code we provide is free for non-commercial use (see LICENSE). <b>While it is our understanding that no KEGG license is required to run the web app on user's local computer for personal use (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), the users <ins>must</ins> understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html) and decide for themselves. For example, if the user wishes to provide this tool (or their own tool based on a subset of this tool involving the scripts with KEGG APIs) as a service (see LICENSE), they <u>must</u> obtain their own KEGG license with suitable rights.</b>
 
 The cache folder should have rwx permission for apache:apache, assuming that the web server runs as the user 'apache'. This can be acheived by the linux command: 
 
