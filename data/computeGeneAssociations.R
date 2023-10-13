@@ -1,9 +1,12 @@
 # This Rscript generates the precomputed RDS file for summary table information
-# Input: species or organism codelike hsa,mmu, rno
-# Dependencies : Also reguires <species>_metSYMBOLs,txt which is a list of metabolic gene symbols.
+# Call syntax: Rscript computeGeneAssociations.R <species> <domainName>
+# Input: species or organism codelike hsa, mmu, rno
+#      : domainName (e.g. sc-cfdewebdev.sdsc.edu)
+# Dependencies : Also requires <species>_metSYMBOLs.txt which is a list of metabolic gene symbols.
 #              : This file can be generated using getEntrzIDsSymbolsFromKeggLinkDF.R
 # Output: <species>_summaryTable.RDS
 # susrinivasan@ucsd.edu; mano@sdsc.edu
+
 library(httr)
 library(jsonlite)
 library(dplyr)
@@ -11,15 +14,20 @@ library(tidyjson)
 
 options <- commandArgs(trailingOnly = TRUE)
 organism <- options[1]
+domainName  <- options[2]
 print(paste0("Organism = ", organism))
+print(paste0("domainName = ", domainName))
 # Define the function to connect to the URL and return a JSON object
 errorgenes = vector()
 
+# Use your domain name to construct the URL below
 get_json <- function(mystring) {
   if(organism == "test") {
-    url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
+    #url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
+    url <- paste0("https://", domainName, "/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
   } else {
-    url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
+    #url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
+    url <- paste0("https://", domainName, "/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
   }
   response <- GET(url)
   content <- rawToChar(response$content)
