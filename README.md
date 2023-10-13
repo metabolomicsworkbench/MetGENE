@@ -117,7 +117,7 @@ Some features of MetGENE can be used from the command prompt via Rscript. These 
 
 tictoc, curl, data.table, dplyr, ggplot2, ggrepel, httr, jsonlite, KEGGREST, plyr, reshape2, rlang, rvest, stringi, stringr, textutils, tidyr, tidyverse, tuple, utils, xtable
 
-Then, use the following commands and the output of the script can be used elsewhere. More information about the call syntax is provided in the respective R script files. For example, below, 3098 and 6120 are Entrez IDs for the genes HK1 and RPE respectively.
+Then, use the following commands and the output of the script can be used elsewhere. More information about the call syntax is provided in the respective R script files. For example, below, 3098 and 6120 are Entrez IDs for the genes HK1 and RPE, respectively.
 
 Rscript extractPathwayInfo.R hsa 3098 HK1 HomoSapiens > pathwayInfo.html
 
