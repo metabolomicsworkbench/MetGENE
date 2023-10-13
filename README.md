@@ -14,9 +14,12 @@ The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGE
 
 The MetGENE tool has been also registered at <a href="https://scicrunch.org/resources/data/record/nlx_144509-1/SCR_023402/resolver?q=SCR_023402&l=SCR_023402&i=rrid:scr_023402">SciCrunch RRID Portal</a>: RRID:SCR_023402.
 
-## MetGENE source code (R, php and supporting files)
+### MetGENE source code (R, php and supporting files)
 
-We also provide the source code so that one can clone this tool and run it locally as a web application for their personal use. <b>KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html).</b> 
+We also provide the source code so that one can clone this tool and run it locally as a web application for their personal use. 
+
+## Restrictions due to the use of KEGG APIs
+<b>KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html) for restrictions before using it in a particular manner.</b> 
 
 <b>
 The following scripts use KEGG APIs:<br>
