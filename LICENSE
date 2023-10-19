@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2020 Metabolomics Workbench
+Copyright (c) 2023 Metabolomics Workbench
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -9,8 +9,9 @@ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+The above copyright notice and this permission notice (including Section 1 
+"Restrictions due to the use of Kyoto Encyclopedia of Genes and Genomes 
+(KEGG) APIs") shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
@@ -20,10 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
-Restrictions due to the use of Kyoto Encyclopedia of Genes and Genomes (KEGG) APIs:
-While the code provided is not subject to any restrictions, users may require a suitable license from KEGG before they use MetGENE depending upon the manner of use.
+1. Restrictions due to the use of Kyoto Encyclopedia of Genes and Genomes (KEGG) APIs:
+While the code provided is not subject to any restrictions, users may require a 
+suitable license from KEGG before they use MetGENE depending upon the manner of use.
 
-KEGG APIs are used in this tool. Please see their license terms at https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html) for restrictions before using it in a particular manner.
+KEGG APIs are used in this tool. Please see their license terms at 
+https://www.kegg.jp/kegg/legal.html (see also https://www.pathway.jp/en/academic.html) 
+for restrictions before using it in a particular manner.
 The following scripts use KEGG APIs:
 extractFilteredStudiesInfo.R
 extractMetaboliteInfo.R
@@ -33,11 +37,24 @@ data/getCompoundInfoFromKegg.R
 data/getKEGGLinkDataForGenes.R
 data/getReactionInfoFromKegg.R
 
-Using this code to provide user's own web service:
-While it is our understanding that no KEGG license is required to run the web app on user's local computer for personal use (e.g., access as localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its access to the IP addresses belonging to their own research group), the users must understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html, see also https://www.pathway.jp/en/academic.html) and decide for themselves. For example, if the user wishes to provide this tool (or their own tool based on a subset of MetGENE scripts with KEGG APIs) as a service, they must obtain their own KEGG license with suitable rights.
+1a. Using this code to provide user's own web service:
+While it is our understanding that no KEGG license is required to run the web app 
+on user's local computer for personal use (e.g., access as 
+localhost:install_location_withrespectto_DocumentRoot/MetGENE, or, restrict its 
+access to the IP addresses belonging to their own research group), the users must 
+understand the KEGG license terms (https://www.kegg.jp/kegg/legal.html, see also 
+https://www.pathway.jp/en/academic.html) and decide for themselves. For example, 
+if the user wishes to provide this tool (or their own tool based on a subset of 
+MetGENE scripts with KEGG APIs) as a service, they must obtain their own KEGG 
+license with suitable rights.
 
-Faster version of MetGENE:
-If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To achieve this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R. Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please see the respective R files in the 'data' folder for instructions to run them.
+1b. Faster version of MetGENE:
+If and only if the user has purchased license for KEGG FTP Data, they can activate 
+a 'preCompute' mode to run faster version of MetGENE. To achieve this, please set 
+preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute 
+is set to 0 in the file setPrecompute.R. Further, to use the faster version, the user 
+needs to run the R scripts in the 'data' folder first. Please see the respective R 
+files in the 'data' folder for instructions to run them.
 
 
 ========================================================================================================
