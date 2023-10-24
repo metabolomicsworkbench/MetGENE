@@ -59,7 +59,7 @@ https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneI
 https://bdcw.org/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=BAR
 
 
-# Test on sc-cfdewebdev.sdsc.edu
+# Test on sc-cfdewebdev.sdsc.edu (intended for internal use)
 
 ## For REST API-based access to integrate in user’s existing tools:
 
