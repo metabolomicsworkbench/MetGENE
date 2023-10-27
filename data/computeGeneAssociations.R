@@ -1,4 +1,5 @@
 # This Rscript generates the precomputed RDS file for summary table information
+# Run this script with precompute flag set to zero in setPrecompute.R
 # Call syntax: Rscript computeGeneAssociations.R <species> <domainName>
 # Input: species or organism codelike hsa, mmu, rno
 #      : domainName (e.g. sc-cfdewebdev.sdsc.edu)
@@ -22,13 +23,8 @@ errorgenes = vector()
 
 # Use your domain name to construct the URL below
 get_json <- function(mystring) {
-  if(organism == "test") {
-    #url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
-    url <- paste0("https://", domainName, "/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
-  } else {
-    #url <- paste0("https://sc-cfdewebdev.sdsc.edu/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
-    url <- paste0("https://", domainName, "/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
-  }
+  url <- paste0("https://", domainName, "/MetGENE/rest/summary/species/",organism,"/GeneIDType/SYMBOL_OR_ALIAS/GeneInfoStr/", mystring, "/anatomy/NA/disease/NA/phenotype/NA/viewType/json")
+
   response <- GET(url)
   content <- rawToChar(response$content)
   print(url)

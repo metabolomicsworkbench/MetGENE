@@ -16,42 +16,39 @@
 library(KEGGREST)
 library(tidyverse)
 library(plyr)
+library(dplyr)
 
+getDFforGenes <- function(vec) {
+   query <- paste(vec, collapse = "+")
+   print(query)   
+   df <- data.frame(keggLink(query))
+   return(df)
+}
 getKEGGLinkDataForGenes <- function(species) {
-    infn = paste0("data/", species, "_keggLink.RDS");
-    mgfn = paste0("data/", species, "_keggLink_mg.RDS"); # "hsa_keggLink_mg.RDS";
+    infn = paste0("./", species, "_keggLink.RDS");
+    mgfn = paste0("./", species, "_keggLink_mg.RDS"); # "hsa_keggLink_mg.RDS";
 
     load_from_RDS = 1;
 
     if(tolower(species) %in% c("human","hsa","homo sapiens")){
-	entrezID_df = read.table("data/Homo_sapiens.gene_info_20220517.txt_proteincoding_ENTREZID.txt", header = TRUE)
+	entrezID_df = read.table("./Homo_sapiens.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
     }  else if(tolower(species) %in% c("mouse","mmu","mus musculus")){
-	entrezID_df = read.table("data/Mus_musculus.gene_info_20220517.txt_proteincoding_ENTREZID.txt", header = TRUE)
+	entrezID_df = read.table("./Mus_musculus.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
     } else if(tolower(species) %in% c("rat","rno","rattus norvegicus")){
-	entrezID_df = read.table("data/Rattus_norvegicus.gene_info_20220517.txt_proteincoding_ENTREZID.txt", header = TRUE)
+	entrezID_df = read.table("./Rattus_norvegicus.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
     }
 
     geneVec = entrezID_df$ENTREZID
-    all_df = data.frame()
 
-                                        #geneVec = c("6120", "3098" , "9314"); 
-    for (i in 1:length(geneVec)){
-        g = geneVec[i]
-        queryStr = paste0(species, ":",g)
-                                        #  print(queryStr)
-        df <- keggLink(queryStr)
-                                        # check whether the genes have reactions
-###rxns <- df[str_detect(df[,2],"rn:"),2];
-                                        #  print(rxns)
-###if (length(rxns) != 0) {
-        all_df = rbind(all_df, data.frame(df))
-###}
-    }
-    df = all_df;
+    queryStrVec = paste0(species,":",geneVec)
+    query_split = split(queryStrVec,  ceiling(seq_along(queryStrVec)/100))
+    info = llply(query_split, function(x)getDFforGenes(x))
+
+    df = Reduce(full_join,info);
 
     colnames(df) = c("org_ezid", "kegg_data", "relation_type")
     saveRDS(df, file = infn)
-
+    print("Done saving all genes RDS")
     #library(tictoc); tic('Time to load'); df=readRDS(infn); toc()
 
     rn_ind = grep("rn:", df[,2]); mgid = unique(df[rn_ind,1]); length(mgid);
@@ -62,12 +59,16 @@ getKEGGLinkDataForGenes <- function(species) {
     dim(dfmg)
 
     saveRDS(dfmg, file = mgfn, ascii = FALSE, version = NULL, compress = TRUE, refhook = NULL)
+    print("Done saving all genes mg RDS")
 #    tic('load time of dfmg');
     dfmg = readRDS(mgfn); 
 #    toc();
 
-                                        # test example
-    if(species %in% c("hsa")){
+
+
+
+    # test example
+    if (species %in% c("hsa")) {
         gl = c("hsa:3098","hsa:80339","hsa:6120", "hsa:3417", "hsa:5730", "hsa:4190");
 #        tic("Time to extract subset for a set of genes:");
         subdf = dfmg[dfmg[,1] %in% gl, ];
@@ -75,12 +76,12 @@ getKEGGLinkDataForGenes <- function(species) {
         # Time to extract subset for a set of genes:: 0.004 sec elapsed
     }
 
-                                        # Code block to use KEGGLINK or load saved RDS file
+   # Code block to use KEGGLINK or load saved RDS file
     measure_compute_time = 0;
 
     run_this_code = 0;
 
-    if(run_this_code == 1){
+    if (run_this_code == 1) {
         if(load_from_RDS==0){
                                         # Call KEGGLINK
         } else {
@@ -88,8 +89,8 @@ getKEGGLinkDataForGenes <- function(species) {
             dfmg = readRDS(mgfn);
             if(measure_compute_time==1) { toc(); }
         }
-    } else{
-                                        # do nothing
+    } else {
+      # do nothing
     }
 }
 

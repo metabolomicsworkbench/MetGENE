@@ -23,7 +23,7 @@ remove_prefix <- function(entry) {
 
 args <- commandArgs(TRUE);
 orgStr = args[1]
-rdsFilename = paste0("./data/",orgStr,"_keggLink_mg.RDS")
+rdsFilename = paste0("./",orgStr,"_keggLink_mg.RDS")
 print(rdsFilename)
 all_df = readRDS(rdsFilename)
 rxns = all_df[str_detect(all_df[,2],"rn:"),]
@@ -31,10 +31,11 @@ rxns = all_df[str_detect(all_df[,2],"rn:"),]
 rxns$kegg_data <- sapply(rxns$kegg_data, remove_prefix)
 rxnsList = rxns$kegg_data
 
-print(rxnsList)
+#print(rxnsList)
 
 
-query_split = split(rxnsList,  ceiling(seq_along(rxnsList)/10))
+query_split = split(rxnsList,  ceiling(seq_along(rxnsList)/100))
+length(query_split)
 info = llply(query_split, function(x)keggGet(x)) 
 unlist_info <- unlist(info, recursive = F)
 
@@ -46,7 +47,7 @@ colnames(rxnInfodf) =  c("ENTRY", "NAME", "DEFINITION")
 
 rxnInfodf = rxnInfodf[!duplicated(rxnInfodf$ENTRY),]
 rownames(rxnInfodf) = rxnInfodf$ENTRY
-rxnfilename = paste0("./data/", orgStr, "_keggGet_rxnInfo.RDS")
+rxnfilename = paste0("./", orgStr, "_keggGet_rxnInfo.RDS")
 print(rxnfilename)
 saveRDS(rxnInfodf, file = rxnfilename, ascii = FALSE, version = NULL, compress = TRUE, refhook = NULL)
 

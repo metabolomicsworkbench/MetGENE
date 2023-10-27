@@ -23,7 +23,7 @@ remove_prefix <- function(entry) {
 
 args <- commandArgs(TRUE);
 orgStr = args[1]
-rdsFilename = paste0("./data/",orgStr,"_keggLink_mg.RDS")
+rdsFilename = paste0("./",orgStr,"_keggLink_mg.RDS")
 print(rdsFilename)
 all_df = readRDS(rdsFilename)
 cpds = all_df[str_detect(all_df[,2],"cpd:"),]
@@ -34,7 +34,7 @@ metabList = cpds$kegg_data
 print(metabList)
 
 
-query_split = split(metabList,  ceiling(seq_along(metabList)/10))
+query_split = split(metabList,  ceiling(seq_along(metabList)/100))
 info = llply(query_split, function(x)keggGet(x)) 
 unlist_info <- unlist(info, recursive = F)
 
@@ -46,7 +46,7 @@ cpdInfodf = data.frame(dd)
 
 cpdInfodf = cpdInfodf[!duplicated(cpdInfodf$ENTRY),]
 rownames(cpdInfodf) = cpdInfodf$ENTRY
-metfilename = paste0("./data/", orgStr, "_keggGet_cpdInfo.RData")
+metfilename = paste0("./", orgStr, "_keggGet_cpdInfo.RData")
 print(metfilename)
 save(cpdInfodf,file = metfilename)
 #metfilenameRDS = paste0("./data/", orgStr, "_keggGet_cpdInfo.RDS")
