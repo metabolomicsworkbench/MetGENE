@@ -21,7 +21,12 @@ library(plyr)
 getGeneInfoTable <- function(orgStr, geneArray, domainName) {
 # Get the current directory
   currDir = paste0("/",basename(getwd()));
-  url_str_gene_php = paste0("https://", domainName,"/geneid/geneid_proc_selcol_GET.php?species=",orgStr,"&GeneListStr=", geneArray, "&GeneIDType=ENTREZID&View=json&IncHTML=1");
+  #url_str_gene_php = paste0("https://", domainName,"/geneid/geneid_proc_selcol_GET.php?species=",orgStr,"&GeneListStr=", geneArray, "&GeneIDType=ENTREZID&View=json&IncHTML=1");
+  GeneIDType = "ENTREZID";
+  USE_NCBI_GENE_INFO = 0;
+  ViewType = "json";
+  IncHTML = 1;
+  url_str_gene_php = paste0("https://", domainName, "/geneid/geneid_proc_selcol_GET.php?species=", orgStr, "&GeneListStr=", geneArray, "&GeneIDType=", GeneIDType, "&USE_NCBI_GENE_INFO=", USE_NCBI_GENE_INFO, "&View=", ViewType, "&IncHTML=", IncHTML);
 
   GeneAllInfo = fromJSON(url_str_gene_php, simplifyVector = TRUE);
     GeneAllInfo_forhtml = unique(GeneAllInfo[c("SYMBOL","HTML_KEGG", "HTML_SYMBOL", "HTML_ENTREZID", "HTML_ENSEMBL", "HTML_UNIPROT", "HTML_MARRVEL")]);

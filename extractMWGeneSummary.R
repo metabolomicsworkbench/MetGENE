@@ -259,6 +259,8 @@ getGeneSummaryInfoTableWithKeggQuery <- function(orgStr, geneIDArray, geneSymArr
             organism_name = "Human";
         } else if(orgStr %in% c("Mouse","mouse","mmu","Mus musculus")){
             organism_name = "Mouse";
+        } else if(orgStr %in% c("Rat","rat","rno","Rattus norvegicus")){
+            organism_name = "Rat";
         }
         queryStr = paste0(orgStr, ":", geneIdStr)
                                         #Get all reactions for this gene
@@ -304,7 +306,7 @@ getGeneSummaryInfoTableWithKeggQuery <- function(orgStr, geneIDArray, geneSymArr
         }
         countMatrix[g,] = c(genePthwyCnt, geneRxnsCnt, geneMetabCnt, geneStudyCnt);
     }
-
+#    print(countMatrix);
     pathwaysLinkStr = paste0("<a href=\"",currDir,"/pathways.php?species=",orgStr,"&GeneIDType=ENTREZID","&anatomy=","NA","&disease=","NA","&phenotype=","NA","&GeneInfoStr=",geneIDArray,"\" target=\"_blank\">Pathways</a>");
 #    print(pathwaysLinkStr);
     rxnsLinkStr = paste0("<a href=\"",currDir,"/reactions.php?species=",orgStr,"&GeneIDType=ENTREZID","&anatomy=","NA","&disease=","NA","&phenotype=","NA","&GeneInfoStr=",geneIDArray,"\" target=\"blank\">Reactions</a>");
