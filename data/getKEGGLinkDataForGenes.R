@@ -29,13 +29,13 @@ getKEGGLinkDataForGenes <- function(species) {
     mgfn = paste0("./", species, "_keggLink_mg.RDS"); # "hsa_keggLink_mg.RDS";
 
     load_from_RDS = 1;
-
+    
     if(tolower(species) %in% c("human","hsa","homo sapiens")){
-	entrezID_df = read.table("./Homo_sapiens.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
+	entrezID_df = read.table("./hsa_EZID_SYMB.txt", header = TRUE)
     }  else if(tolower(species) %in% c("mouse","mmu","mus musculus")){
-	entrezID_df = read.table("./Mus_musculus.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
+	entrezID_df = read.table("./mmu_EZID_SYMB.txt", header = TRUE)
     } else if(tolower(species) %in% c("rat","rno","rattus norvegicus")){
-	entrezID_df = read.table("./Rattus_norvegicus.gene_info_20220517.txt_proteincoding_ENTREZID_SYMBOL.txt", header = TRUE)
+	entrezID_df = read.table("./rno_EZID_SYMB.txt", header = TRUE)
     }
 
     geneVec = entrezID_df$ENTREZID
