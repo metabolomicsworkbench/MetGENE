@@ -43,10 +43,10 @@ The code we provide is free for non-commercial use (see LICENSE). <b>While it is
 ### Faster version of MetGENE
 <b>If and only if the user has purchased license for KEGG FTP Data, they can activate a 'preCompute' mode to run faster version of MetGENE. To achieve this, please set preCompute = 1 in the file setPrecompute.R. Otherwise, please ensure that preCompute is set to 0 in the file setPrecompute.R.</b> Further, to use the faster version, the user needs to run the R scripts in the 'data' folder first. Please run them in the following order:
 
-getKEGGLinkDataForGenes.R
-getEntrzIDsSymbolsFromKeggLinkDF.R
-getReactionInfoFromKegg.R
-getCompoundInfoFromKegg.R
+getKEGGLinkDataForGenes.R<br>
+getEntrzIDsSymbolsFromKeggLinkDF.R<br>
+getReactionInfoFromKegg.R<br>
+getCompoundInfoFromKegg.R<br>
 computeMetGENESummary.R
 
 Please see the respective R files in the 'data' folder for instructions to run them using Rscript command.
