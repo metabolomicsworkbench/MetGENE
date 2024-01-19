@@ -293,7 +293,9 @@ getGeneSummaryInfoTableWithKeggQuery <- function(orgStr, geneIDArray, geneSymArr
             for (m in 1:length(metabList)){
                 
                 metabStr = metabList[[m]];
-                path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;", organism_name, ";;;", metabStr);
+                # /rest/metstat/<ANALYSIS_TYPE>;<POLARITY>;<CHROMATOGRAPHY>;<SPECIES>;<SAMPLE SOURCE>;<DISEASE>;<KEGG_ID>;<REFMET_NAME>
+                # path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;", organism_name, ";;;", metabStr);
+                path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;;", organism_name, ";;;", metabStr);
                 jslist = read_json(path, simplifyVector = TRUE);
                 mydf_studies = list_of_list_to_df(jslist);
                 studiesVec <- mydf_studies$study;

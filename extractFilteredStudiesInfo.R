@@ -110,8 +110,11 @@ getMetaboliteStudiesForGene <- function(orgId, geneArray, diseaseId, anatomyId, 
            #     print(metabStr);
 
             ## Need this to get RefMet Names, study-ids, study titles
-                                        #      tic("Time taken for studies info per compound")
-            path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;", organism_name, ";", anatomyQryStr, ";", diseaseQryStr, ";", metabStr);
+            #      tic("Time taken for studies info per compound")
+            # /rest/metstat/<ANALYSIS_TYPE>;<POLARITY>;<CHROMATOGRAPHY>;<SPECIES>;<SAMPLE SOURCE>;<DISEASE>;<KEGG_ID>;<REFMET_NAME>
+            #  metabStr is KEGG_ID            
+#            path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;", organism_name, ";", anatomyQryStr, ";", diseaseQryStr, ";", metabStr);
+            path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;;", organism_name, ";", anatomyQryStr, ";", diseaseQryStr, ";", metabStr);
 #            print(path)
             jslist <- read_json(path, simplifyVector = TRUE);
                                         #      toc()
