@@ -14,6 +14,10 @@ The MetGENE tool is available through the web at <a href="https://bdcw.org/MetGE
 
 The MetGENE tool has been also registered at <a href="https://scicrunch.org/resources/data/record/nlx_144509-1/SCR_023402/resolver?q=SCR_023402&l=SCR_023402&i=rrid:scr_023402">SciCrunch RRID Portal</a>: RRID:SCR_023402.
 
+Please cite as:
+
+Srinivasan S, Maurya MR, Ramachandran S, Fahy E, Subramaniam S. MetGENE: gene-centric metabolomics information retrieval tool. GigaScience. 2023;12. PMCID: 10659118. Available from: http://www.ncbi.nlm.nih.gov/pubmed/37983749 [DOI: https://doi.org/10.1093/gigascience/giad089].
+
 ### MetGENE source code (R, php and supporting files)
 
 We also provide the source code so that one can clone this tool and run it locally as a web application for their personal use. 
