@@ -65,6 +65,9 @@ https://bdcw.org/MetGENE/rest/reactions/species/hsa/GeneIDType/SYMBOL/GeneInfoSt
 
 https://bdcw.org/MetGENE/rest/reactions/species/hsa/GeneIDType/ENSEMBL/GeneInfoStr/ENSG00000000419/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
+https://bdcw.org/MetGENE/rest/reactions/species/hsa/GeneIDType/UNIPROT/GeneInfoStr/A8K7J7/anatomy/NA/disease/NA/phenotype/NA/viewType/json
+
+
 Metabolites:
 
 https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/txt
@@ -73,11 +76,15 @@ https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfo
 
 https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/ENSEMBL/GeneInfoStr/ENSG00000000419/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
+https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/UNIPROT/GeneInfoStr/A8K7J7/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
+
 Studies:
 
 https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,ALDOB/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/UNIPROT/GeneInfoStr/A8K7J7/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
 Summary view:
 
@@ -88,6 +95,8 @@ https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/PNPLA3/anatomy/NA/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/UNIPROT/GeneInfoStr/A8K7J7/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
 Please use __ (double underscore) or comma (,) to specify more than one gene, as in the string HK1__PNPLA3 or HK1,RPE. For SYMBOL like IDs, the user may specify SYMBOL_OR_ALIAS for GeneIDType, so that, for gene ID conversion, the term will be first searched in SYMBOL and if not found then it will be searched in ALIAS.
 
