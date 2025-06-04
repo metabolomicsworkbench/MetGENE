@@ -72,6 +72,10 @@ Metabolites:
 
 https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/txt
 
+https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/Blood/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/Fibroblast+cells/disease/NA/phenotype/NA/viewType/json
+
 https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/ENSEMBL/GeneInfoStr/ENSG00000000419/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
@@ -81,6 +85,14 @@ https://bdcw.org/MetGENE/rest/metabolites/species/hsa/GeneIDType/UNIPROT/GeneInf
 Studies:
 
 https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/Blood/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/Fibroblast+cells/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/Blood/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/Fibroblast+cells/disease/NA/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/studies/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,ALDOB/anatomy/NA/disease/Diabetes/phenotype/NA/viewType/json
 
@@ -93,6 +105,10 @@ Please note that for the summary view, the filters anatomy, disease and phenotyp
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/NA/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/Blood/disease/NA/phenotype/NA/viewType/json
+
+https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/HK1,RPE/anatomy/Fibroblast+cells/disease/NA/phenotype/NA/viewType/json
 
 https://bdcw.org/MetGENE/rest/summary/species/hsa/GeneIDType/SYMBOL/GeneInfoStr/PNPLA3/anatomy/NA/disease/NA/phenotype/NA/viewType/json
 
