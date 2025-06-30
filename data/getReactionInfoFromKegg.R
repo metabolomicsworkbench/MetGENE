@@ -3,7 +3,7 @@
 # Input: species or organism codelike hsa,mmu, rno
 # Output: <species>_keggGet_rnxInfo.RDS containing reaction information from KEGG
 # susrinivasan@ucsd,edu; mano@sdsc.edu
- 
+
 ################################################
 # Restrictions due to the use of KEGG APIs (https://www.kegg.jp/kegg/legal.html, see also https://www.pathway.jp/en/academic.html)
 # * Using this code to provide user's own web service
@@ -21,33 +21,73 @@ remove_prefix <- function(entry) {
   substr(entry, start = 4, stop = nchar(entry))
 }
 
-args <- commandArgs(TRUE);
-orgStr = args[1]
-rdsFilename = paste0("./",orgStr,"_keggLink_mg.RDS")
-print(rdsFilename)
-all_df = readRDS(rdsFilename)
-rxns = all_df[str_detect(all_df[,2],"rn:"),]
+args <- commandArgs(TRUE)
+orgStr <- args[1]
+rdsFilename <- paste0("./", orgStr, "_keggLink_mg.RDS")
+print(paste("Reading from:", rdsFilename))
 
+all_df <- readRDS(rdsFilename)
+rxns <- all_df[str_detect(all_df[, 2], "rn:"), ]
 rxns$kegg_data <- sapply(rxns$kegg_data, remove_prefix)
-rxnsList = rxns$kegg_data
+rxnsList <- rxns$kegg_data
 
-#print(rxnsList)
+# Parameters
+batch_size <- 10 # Number of IDs per KEGG API call
+batches_per_phase <- 10 # Number of API calls per phase
+pause_between_phases <- 10 # Seconds to pause between phases
 
+query_split <- split(rxnsList, ceiling(seq_along(rxnsList) / batch_size))
+total_batches <- length(query_split)
+print(paste("Total batches:", total_batches))
 
-query_split = split(rxnsList,  ceiling(seq_along(rxnsList)/100))
-length(query_split)
-info = llply(query_split, function(x)keggGet(x)) 
-unlist_info <- unlist(info, recursive = F)
+info_list <- list()
 
-extract_info <- lapply(unlist_info, '[', c("ENTRY", "NAME", "DEFINITION"))
+# Process in phases
+num_phases <- ceiling(total_batches / batches_per_phase)
 
-dd=do.call(rbind, extract_info)                                                                                  
-rxnInfodf = data.frame(dd)
-colnames(rxnInfodf) =  c("ENTRY", "NAME", "DEFINITION")
+for (phase_idx in seq_len(num_phases)) {
+  start_batch <- (phase_idx - 1) * batches_per_phase + 1
+  end_batch <- min(phase_idx * batches_per_phase, total_batches)
 
-rxnInfodf = rxnInfodf[!duplicated(rxnInfodf$ENTRY),]
-rownames(rxnInfodf) = rxnInfodf$ENTRY
-rxnfilename = paste0("./", orgStr, "_keggGet_rxnInfo.RDS")
-print(rxnfilename)
-saveRDS(rxnInfodf, file = rxnfilename, ascii = FALSE, version = NULL, compress = TRUE, refhook = NULL)
+  cat(sprintf("Processing phase %d/%d (batches %d to %d)\n", phase_idx, num_phases, start_batch, end_batch))
 
+  for (batch_idx in start_batch:end_batch) {
+    batch_ids <- query_split[[batch_idx]]
+
+    tryCatch(
+      {
+        batch_info <- keggGet(batch_ids)
+        info_list <- c(info_list, batch_info)
+      },
+      error = function(e) {
+        cat(sprintf("Error in batch %d: %s\n", batch_idx, e$message))
+      }
+    )
+  }
+
+  # Pause after each phase except the last one
+  if (phase_idx < num_phases) {
+    cat(sprintf("Pausing for %d seconds before next phase...\n", pause_between_phases))
+    Sys.sleep(pause_between_phases)
+  }
+}
+
+# Extract and format info
+# extract_info <- lapply(info_list, '[', c("ENTRY", "NAME", "DEFINITION"))
+extract_info <- lapply(info_list, function(entry) {
+  list(
+    ENTRY = if (!is.null(entry$ENTRY)) entry$ENTRY else "",
+    NAME = if (!is.null(entry$NAME)) paste(entry$NAME, collapse = "; ") else "",
+    DEFINITION = if (!is.null(entry$DEFINITION)) entry$DEFINITION else ""
+  )
+})
+
+dd <- do.call(rbind, extract_info)
+rxnInfodf <- data.frame(dd)
+colnames(rxnInfodf) <- c("ENTRY", "NAME", "DEFINITION")
+rxnInfodf <- rxnInfodf[!duplicated(rxnInfodf$ENTRY), ]
+rownames(rxnInfodf) <- rxnInfodf$ENTRY
+
+rxnfilename <- paste0("./", orgStr, "_keggGet_rxnInfo.RDS")
+print(paste("Saving to:", rxnfilename))
+saveRDS(rxnInfodf, file = rxnfilename, compress = TRUE)

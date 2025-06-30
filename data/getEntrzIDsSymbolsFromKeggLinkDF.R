@@ -44,4 +44,3 @@ symboldf =  sort(unique(newdf$SYMBOL))
 print(head(symboldf))
 #write.table(entrziddf, paste0("./",species,"_metEntrzIDs.txt"), sep="\n", col.names=FALSE, row.names=FALSE, quote=FALSE)
 write.table(symboldf, paste0("./",species,"_metSYMBOLs.txt"), sep = "\n", col.names=FALSE, row.names=FALSE, quote=FALSE)
-
