@@ -51,12 +51,13 @@ getPathwayInfoTable <- function(species, geneArray, geneSymbolArray, species_sci
       postlinkStr = paste0("&species=",organism_name,"&cluster=true\" target=\"_blank\">");
       reactomeColStr = paste0(prelinkStr,geneSymbolStr,postlinkStr,geneSymbolStr,"</a>");
 
-      prelinkStr = "<a href=\"https://www.genome.jp/dbget-bin/get_linkdb?-t+pathway+";
+      #prelinkStr = "<a href=\"https://www.genome.jp/dbget-bin/get_linkdb?-t+pathway+";
+      prelinkStr = "<a href=\"https://www.kegg.jp/entry/"; # 2025/05/19
       postlinkStr = "\" target=\"_blank\">";
       keggColStr = paste0(prelinkStr,species,":",geneIdStr,postlinkStr,geneSymbolStr,"</a>");
 
 #https://www.wikipathways.org/search.html?q=HK1
-       prelinkStr = "<a href=\"https://www.wikipathways.org/search.html?q=";
+       prelinkStr = "<a href=\"https://www.wikipathways.org/search.html?query=";
        postlinkStr = paste0("&species=",organism_name,"&title=Special%3ASearchPathways&doSearch=1&ids=&codes=&type=query\" target=\"_blank\">");
        wikiColStr = paste0(prelinkStr,geneSymbolStr,postlinkStr,geneSymbolStr,"</a>");
 #       wikiColStr = paste0(geneIdStr);

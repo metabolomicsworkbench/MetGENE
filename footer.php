@@ -11,7 +11,9 @@ $phenotype=(isset($_SESSION['phenotype']))?$_SESSION['phenotype']:$_GET["phenoty
 
 $termsofusehref = "<li><a href=\"termsofuse.php?GeneInfoStr=".$geneList."&species=".$species."&disease=".$disease."&anatomy=".$anatomy."&phenotype=".$phenotype."\">Terms of use</a></li>";
 $contacthref = "<li><a href=\"contact.php?GeneInfoStr=".$geneList."&species=".$species."&disease=".$disease."&anatomy=".$anatomy."&phenotype=".$phenotype."\">Contact</a></li>";
+
 ?>
+
 <div id="constrain">
 <div class ="constrain">
 <div id="ftr" class="footer">
@@ -55,6 +57,14 @@ $contacthref = "<li><a href=\"contact.php?GeneInfoStr=".$geneList."&species=".$s
 	</td>
 	</tr>
 	</table>
+<table style="width: 100%; border-collapse: collapse;">
+  <tr>
+    <td style="background-color: lightblue; color: black; padding: 10px; text-align: center; border: 1px solid black;">
+      This repository is under review for potential modification in compliance with Administration directives.
+    </td>
+  </tr>
+</table>
+
 <!--<p><a href="https://bdcw.org/MetGENE/index.php">Back to Gene query</a></p>-->
 </div>
 </div>

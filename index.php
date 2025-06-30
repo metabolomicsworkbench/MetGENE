@@ -110,7 +110,10 @@
 
 <td><center><select name = "anatomy">
             <option value = "NA" selected>Select anatomy/Sample source</option>
-<?php include 'sample_source_pulldown_menu_phpcode.php' ?>
+<?php
+// include 'sample_source_pulldown_menu_phpcode.php' 
+include 'ssdm_sample_source_pulldown_menu_phpcode.php'
+?>
 </select></center></td>
 
 <td><center><select name="disease_slim" id="disease_slim">
@@ -158,10 +161,16 @@
     <?php echo "<a href=\"https://commonfund.nih.gov/dataecosystem\" target=\"_blank\"><img src=\"".$METGENE_BASE_DIR_NAME."/images/CFDEtransparent.png\" alt=\"logo\" width=\"80\"></a>";?>
 	</td>
 	</tr>
+
 	</table>
 
-
-
+<table style="width: 100%; border-collapse: collapse;">
+  <tr>
+    <td style="background-color: lightblue; color: black; padding: 10px; text-align: center; border: 1px solid black;">
+      This repository is under review for potential modification in compliance with Administration directives.
+    </td>
+  </tr>
+</table>
 
 </div>
 </div>

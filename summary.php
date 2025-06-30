@@ -2,9 +2,17 @@
  $viewType = $_GET["viewType"];
 ?>
 <?php if ( strcmp($viewType, "json") == 0 || strcmp($viewType, "txt") == 0): 
- $species = $_GET["species"];
- $geneList = $_GET["GeneInfoStr"];
- $geneIDType = $_GET["GeneIDType"];
+ $species = escapeshellarg($species);
+ $gene_array_str = escapeshellarg($gene_array_str);
+ $gene_sym_str = escapeshellarg($gene_sym_str);
+ $filename = escapeshellarg($filename);
+ $viewType = escapeshellarg($viewType);
+  $anatomy = urlencode($_GET["anatomy"]);
+  $disease = urlencode($_GET["disease"]);
+
+
+exec("/usr/bin/Rscript extractMWGeneSummary.R $species $gene_array_str $gene_sym_str $filename $viewType $anatomy $disease", $output, $retVar);
+
 
   $domainName = $_SERVER['SERVER_NAME'];
  exec("/usr/bin/Rscript extractGeneIDsAndSymbols.R $species $geneList $geneIDType $domainName", $symbol_geneIDs, $retvar);
@@ -34,10 +42,11 @@
  $suffix = ".png";
  $filename = $prefix.rand(1,1000).$suffix;
  $gene_array_str = implode("__", $gene_array);
-
+ 
  $gene_sym_str = implode("__", $gene_symbols);
-
- exec("/usr/bin/Rscript extractMWGeneSummary.R $species $gene_array_str $gene_sym_str $filename  $viewType", $output, $retVar);
+ $anatomy = urlencode($_GET["anatomy"]);
+ $disease = urlencode($_GET["disease"]);
+ exec("/usr/bin/Rscript extractMWGeneSummary.R $species $gene_array_str $gene_sym_str  $filename  $viewType $anatomy $disease", $output, $retVar);
  $htmlbuff = implode("\n", $output);
  if (strcmp($viewType, "json") == 0){ 
    header('Content-type: application/json; charset=UTF-8'); 
@@ -45,7 +54,8 @@
    header('Content-Type: text/plain; charset=UTF-8');
  }
  echo $htmlbuff;
-
+//echo "<p>Disease: <strong>$disease</strong></p>";
+//echo "<p>Anatomy: <strong>$anatomy</strong></p>";
 
 ?>
 <?php else: ?>
@@ -187,10 +197,24 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
   $filename = $prefix.rand(1,1000).$suffix;
   $gene_array_str = implode("__", $gene_array);
   $gene_sym_str = implode("__", $gene_sym_arr);
-
+  $anatomy_str = $_GET["anatomy"];
+  $disease_str = $_GET["disease"];
+  $anatomy = urlencode($anatomy_str);
+  $disease = urlencode($disease_str);
   $viewType = "all";
+  $organism_name = (isset($_SESSION['org_name']))?$_SESSION['org_name']:'';
 
-  exec("/usr/bin/Rscript extractMWGeneSummary.R $species $gene_array_str $gene_sym_str $filename $viewType", $output, $retvar);
+  if (strcmp($anatomy,"NA") == 0 && strcmp($disease,"NA") == 0) {
+    $h3_str = "<h3>Summary Information for <i><b>".$organism_name."</b></i> gene(s) <i><b>".$gene_sym_str."</b></i></h3>";
+  } else if (strcmp($anatomy,"NA") == 0) {
+    $h3_str = "<h3>Summary Information for <i><b>".$organism_name."</b></i> gene(s) <i><b>".$gene_sym_str."</b></i> disease <i><b>".$disease_str."</b></i></h3>";
+  } else if (strcmp($disease,"NA") == 0) {
+    $h3_str = "<h3>Summary Information for <i><b>".$organism_name."</b></i> gene(s) <i><b>".$gene_sym_str."</b></i> anatomy <i><b>".$anatomy_str."</b></i></h3>";
+  } else {
+    $h3_str = "<h3>Summary Information for <i><b>".$organism_name."</b></i> gene(s) <i><b>".$gene_sym_str."</b></i> anatomy <i><b>".$anatomy_str."</b></i> disease <i><b>".$disease_str."</b></i></h3>";
+  }
+  echo $h3_str;
+  exec("/usr/bin/Rscript extractMWGeneSummary.R $species $gene_array_str $gene_sym_str  $filename $viewType $anatomy $disease", $output, $retvar);
   $htmlbuff = implode("\n", $output);
   echo $htmlbuff;
     $btnStr = "<p><button id=\"json\">TO JSON</button> <button id=\"csv\">TO CSV</button> </p>";

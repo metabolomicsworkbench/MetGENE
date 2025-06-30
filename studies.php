@@ -34,6 +34,7 @@
  }
 
  $gene_vec_str = implode(",", $gene_array);
+ 
  exec("/usr/bin/Rscript  extractFilteredStudiesInfo.R $species $gene_vec_str $enc_disease $enc_anatomy $viewType", $output, $retVar);
  $htmlbuff = implode("\n", $output);
  if (strcmp($viewType, "json") == 0){
@@ -42,6 +43,8 @@
    header('Content-Type: text/plain; charset=UTF-8');
  }
  echo $htmlbuff;
+ //echo "Printing encoded anatomy in php";
+ //echo $enc_anatomy;
 
 
 ?>
@@ -205,6 +208,8 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray'])  &&  isset($_SES
     $enc_disease = urlencode($disease);
     $enc_anatomy = urlencode($anatomy);
     $viewType = "html";
+    //echo "Printing encoded anatomy in php";
+    //echo $enc_anatomy;
     exec("/usr/bin/Rscript extractFilteredStudiesInfo.R $species $gene_vec_str $enc_disease $enc_anatomy $viewType", $output, $retvar);
     $htmlbuff = implode($output);
 
