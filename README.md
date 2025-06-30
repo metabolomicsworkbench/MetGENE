@@ -37,7 +37,8 @@ extractMWGeneSummary.R<br>
 extractReactionInfo.R<br>
 data/getCompoundInfoFromKegg.R<br>
 data/getKEGGLinkDataForGenes.R<br>
-data/getReactionInfoFromKegg.R
+data/getReactionInfoFromKegg.R<br>
+data/mergeKEGGPhases.R
 </b>
 
 ### Using this code to provide user's own web service
