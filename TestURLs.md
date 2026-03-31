@@ -217,15 +217,9 @@ https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&ENSEMBL=ENS
 
 https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=ALDOB&GeneID=229
 
-https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE&GeneID=6120&viewType=PIE
-
-https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE&GeneID=6120&viewType=BAR
 
 2. Multiple genes case:
 
 https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821
 
-https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=PIE
-
-https://sc-cfdewebdev.sdsc.edu/dev/MetGENE/mgSummary.php?species=hsa&GeneSym=RPE__ALDOB__GPI&GeneID=6120__229__2821&viewType=BAR
 
