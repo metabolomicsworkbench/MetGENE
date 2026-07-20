@@ -1,20 +1,51 @@
+<?php
+// SECURITY FIX: Start session and load helpers BEFORE any HTML output
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once(__DIR__ . "/metgene_common.php");
+
+// Define esc() wrapper for escapeHtml()
+if (!function_exists('esc')) {
+    function esc(string $v): string {
+        return escapeHtml($v);
+    }
+}
+?>
+
+
 <!DOCTYPE html>
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
 <head><title>MetGENE: Gene Information</title>
 <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <?php 
-$curDirPath = dirname(htmlentities($_SERVER['PHP_SELF']));                                                     
+  
+$curDirPath = dirname($_SERVER['PHP_SELF']);
+$curDirPath = preg_replace('#[^A-Za-z0-9/_-]#', '', $curDirPath);
+
 $METGENE_BASE_DIR_NAME = $curDirPath;
 ?>
 <?php
-    echo "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"".$METGENE_BASE_DIR_NAME."/images/apple-touch-icon.png\">";
-    echo "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"".$METGENE_BASE_DIR_NAME."/images/apple-touch-icon.png\">";
-    echo "<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"".$METGENE_BASE_DIR_NAME."/images/favicon-32x32.png\">";
-    echo "<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"".$METGENE_BASE_DIR_NAME."/images/favicon-16x16.png\">";
+    // SECURITY FIX: Escape HTML attributes
+    echo "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"".esc($METGENE_BASE_DIR_NAME)."/images/apple-touch-icon.png\">";
+    echo "<link rel=\"apple-touch-icon\" sizes=\"180x180\" href=\"".esc($METGENE_BASE_DIR_NAME)."/images/apple-touch-icon.png\">";
+    echo "<link rel=\"icon\" type=\"image/png\" sizes=\"32x32\" href=\"".esc($METGENE_BASE_DIR_NAME)."/images/favicon-32x32.png\">";
+    echo "<link rel=\"icon\" type=\"image/png\" sizes=\"16x16\" href=\"".esc($METGENE_BASE_DIR_NAME)."/images/favicon-16x16.png\">";
     echo "<link rel=\"manifest\" href=\"".$METGENE_BASE_DIR_NAME."/site.webmanifest\">";
 
 ?>
-<?php     include($_SERVER['DOCUMENT_ROOT'].$METGENE_BASE_DIR_NAME."/nav.php");?>
+<?php     
+    $navPath = realpath(__DIR__ . "/nav.php");
+    if ($navPath !== false && strpos($navPath, __DIR__) === 0) {
+        include($navPath);
+    }
+
+?>
+<?php
+// SECURITY FIX: Define $species from session (set by nav.php)
+$species = $_SESSION['species'] ?? 'hsa';
+?>
 
 <?php
 
@@ -69,8 +100,12 @@ $METGENE_BASE_DIR_NAME = $curDirPath;
 $url = $_SERVER["SCRIPT_NAME"];
 $break = explode('/', $url);
 $file = $break[count($break) - 1];
-$cachefile = 'cache/cached-'.session_id().'-'.substr_replace($file ,"",-4).'.html';
+//$cachefile = 'cache/cached-'.session_id().'-'.substr_replace($file ,"",-4).'.html';
+
+$safeSession = preg_replace('/[^A-Za-z0-9]/', '', session_id());
+$cachefile = __DIR__ . "/cache/cached-" . $safeSession . "-" . basename($file, ".php") . ".html";
 $_SESSION['geneInfo_cache_file'] = $cachefile;
+
 $cachetime = 18000;
 
 //echo "<h3>Session changed ".$_SESSION['geneInfo_changed']."</h3>";
@@ -84,8 +119,14 @@ if ( $_SESSION['geneInfo_changed'] == False && isset($_SESSION['geneInfo_cache_f
 ob_start(); // Start the output buffer
 ///////
 
-$gene_array = (isset($_SESSION['geneArray']))?$_SESSION['geneArray']:'';
-$gene_syms = (isset($_SESSION['geneSymbols']))?$_SESSION['geneSymbols']:'';											   
+
+$gene_array = $_SESSION['geneArray'] ?? [];
+$gene_syms = $_SESSION['geneSymbols'] ?? '';
+// SECURITY FIX: Ensure geneArray is actually an array
+if (!is_array($gene_array)) {
+    $gene_array = [];
+}
+											   
 //echo "Gene array = ".$gene_array;
 if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSION['geneInfo_changed']) && $_SESSION['geneInfo_changed'] == 1) {
   $gene_vec_arr = array();
@@ -93,8 +134,9 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
   $gene_sym_str_arr = explode(",", $gene_syms);
   for ($i=0; $i<count($gene_array); $i++) {
     if ($gene_array[$i] != "NA") {
-       $gene_vec_arr[$i] = $gene_array[$i];
-       $gene_sym_arr[$i] = $gene_sym_str_arr[$i];
+      $gene_vec_arr[$i] = $gene_array[$i];
+      // SECURITY FIX: Add bounds check
+      $gene_sym_arr[$i] = isset($gene_sym_str_arr[$i]) ? $gene_sym_str_arr[$i] : '';
     }
   }
   $gene_vec_str = implode("__", $gene_vec_arr);
@@ -104,22 +146,52 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
 
 
   if (!empty($gene_vec_str)) {
-    $h3_str = "<h3>Gene Information for <i><b>".$_SESSION['org_name']."</b></i> gene(s) <i><b>".$gene_sym_str."</b></i></h3>";
-    echo $h3_str;
+    $orgSafe  = esc($_SESSION['org_name'] ?? '');
+    $geneSymSafe = esc($gene_sym_str ?? '');
+
+    echo "<h3>Gene Information for <i><b>{$orgSafe}</b></i> gene(s) <i><b>{$geneSymSafe}</b></i></h3>";
+
 //    $gene_array = $_SESSION['geneArray'];
     $output = array();
     $htmlbuff = array();
     $domainName = $_SERVER['SERVER_NAME'];
-    exec("/usr/bin/Rscript extractGeneInfoTable.R $species $gene_vec_str $domainName", $output, $retvar);
-    $htmlbuff = implode($output);
-    echo "<pre>";
-    echo $htmlbuff;
-    $btnStr = "<p><button id=\"json\">TO JSON</button> <button id=\"csv\">TO CSV</button> </p>";
-    echo $btnStr;
 
-    echo "</pre>";
+    
+
+    $scriptPath = realpath(__DIR__ . "/extractGeneInfoTable.R");
+
+    // SECURITY FIX: Validate script exists before executing
+    if ($scriptPath === false || !is_readable($scriptPath)) {
+        echo "<p style='color:red;'>Error: Gene information script not available.</p>";
+        error_log("SECURITY: extractGeneInfoTable.R not found or not readable");
+    } else {
+        $cmd = "/usr/bin/Rscript " . escapeshellarg($scriptPath) . " "
+            . escapeshellarg($species) . " "
+            . escapeshellarg($gene_vec_str) . " "
+            . escapeshellarg($domainName);
+
+        exec($cmd, $output, $retvar);
+        
+        // SECURITY FIX: Check return code
+        if ($retvar !== 0) {
+            error_log("R script extractGeneInfoTable.R failed with exit code: $retvar");
+            echo "<p style='color:red;'>Error retrieving gene information.</p>";
+        } else {
+            $htmlbuff = implode($output);
+            echo "<pre>";
+            echo $htmlbuff;
+            $btnStr = "<p><button id=\"json\">TO JSON</button> <button id=\"csv\">TO CSV</button> </p>";
+            echo $btnStr;
+            echo "</pre>";
+        }
+    }
+
+    
   } else {
-    echo "<h3><i>No gene information found for <b>".$organism_name."</b> gene(s) <b>".$gene_syms."</b></i></h3>";
+    // SECURITY FIX: Use correct variable name
+    $org_name_safe = $_SESSION['org_name'] ?? 'Unknown';
+    echo "<h3><i>No gene information found for <b>" . esc($org_name_safe) .
+        "</b> gene(s) <b>" . esc($gene_syms ?? '') . "</b></i></h3>";
   }
 }?>
 </p>
@@ -141,7 +213,13 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
 </script>
 
 
-<?php include($_SERVER['DOCUMENT_ROOT'].$METGENE_BASE_DIR_NAME."/footer.php");?>
+<?php 
+  $footerPath = realpath(__DIR__ . "/footer.php");
+  if ($footerPath !== false && strpos($footerPath, __DIR__) === 0) {
+      include($footerPath);
+  }
+
+?>
 
 <?php
 // bottom-cache.php
@@ -149,11 +227,17 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
 //echo "creating cached file ".$cachefile;
 
 $cachefile = $_SESSION['geneInfo_cache_file'];
-$cached = fopen($cachefile, 'w');
+$cached = @fopen($cachefile, 'w');
 
-fwrite($cached, ob_get_contents());
-fclose($cached);
-ob_end_flush(); // Send the output to the browser
+// SECURITY FIX: Check if file open succeeded
+if ($cached !== false) {
+    fwrite($cached, ob_get_contents());
+    fclose($cached);
+    @chmod($cachefile, 0640); // Restrict permissions
+} else {
+    error_log("Failed to write cache file: $cachefile");
+}
+ob_end_flush();
 ?>
 
 </body>

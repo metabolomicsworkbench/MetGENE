@@ -19,18 +19,28 @@
 # Please see the files README.md and LICENSE for more details.
 ################################################
 
-library(KEGGREST)
-library(stringr)
-library(rlang)
-library(data.table)
-library(xtable)
-library(jsonlite)
-library(httr)
-library(rvest)
-library(tictoc)
-library(tidyverse)
+suppressPackageStartupMessages({
+    library(KEGGREST)
+    library(stringr)
+    library(rlang)
+    library(data.table)
+    library(xtable)
+    library(jsonlite)
+    library(httr)
+    library(rvest)
+    library(tictoc)
+    library(tidyverse)
+})
+
+# SECURITY: Load centralized validation + normalization helpers
+source("metgene_common.R")
+
 # set flag for precompute tables
 source("setPrecompute.R")
+
+###############################################################
+# Helper: convert list-of-lists from MW REST API to data frame
+###############################################################
 list_of_list_to_df <- function(jslist) {
     if (length(jslist) > 0) {
         # Convert character columns to numeric
@@ -47,10 +57,20 @@ list_of_list_to_df <- function(jslist) {
         return(NULL)
     }
 }
+
+###############################################################
+# Helper: retrieve KEGG compound IDs for one gene
+###############################################################
 getCpdIDsFromKEGG <- function(queryStr) {
-    kegg_data <- keggGet(queryStr)
+    kegg_data <- tryCatch(
+        keggGet(queryStr),
+        error = function(e) {
+            stop("KEGG query failed for ", queryStr, ": ", e$message, call. = FALSE)
+        }
+    )
+
     if (length(kegg_data) == 0 || is.null(kegg_data[[1]]$ORTHOLOGY)) {
-        stop("Invalid KEGG entry or no ORTHOLOGY information found.")
+        stop("Invalid KEGG entry or no ORTHOLOGY information found for ", queryStr, call. = FALSE)
     }
 
     enzyme <- kegg_data[[1]]$ORTHOLOGY[[1]]
@@ -58,14 +78,19 @@ getCpdIDsFromKEGG <- function(queryStr) {
     # Extract EC number
     ec_number <- regmatches(enzyme, regexpr("EC:\\d+\\.\\d+\\.\\d+\\.\\d+", enzyme))
     if (length(ec_number) == 0) {
-        stop("No EC number found in ORTHOLOGY field.")
+        stop("No EC number found in ORTHOLOGY field for ", queryStr, call. = FALSE)
     }
 
     ec_number <- tolower(ec_number) # Convert to lowercase, e.g., ec:1.1.1.1
 
-
     # Get compound IDs
-    cpds <- keggLink("compound", ec_number)
+    cpds <- tryCatch(
+        keggLink("compound", ec_number),
+        error = function(e) {
+            stop("keggLink failed for ", ec_number, ": ", e$message, call. = FALSE)
+        }
+    )
+
     cpd_vec <- unname(as.vector(cpds))
 
     # Create a dataframe for compounds
@@ -79,33 +104,59 @@ getCpdIDsFromKEGG <- function(queryStr) {
     return(cpd_df)
 }
 
+###############################################################
+# Main function to get metabolite studies (SECURITY HARDENED)
+###############################################################
 getMetaboliteStudiesForGene <- function(orgId, geneArray, diseaseId, anatomyId, viewType) {
-    if (orgId %in% c("Human", "human", "hsa", "Homo sapiens")) {
-        organism_name <- "Human"
-    } else if (orgId %in% c("Mouse", "mouse", "mmu", "Mus musculus")) {
-        organism_name <- "Mouse"
-    } else if (orgStr %in% c("Rat", "rat", "rno", "Rattus norvegicus")) {
-        organism_name <- "Rat"
-    }
-    studiesTableDF <- data.frame(matrix(ncol = 3, nrow = 0), stringsAsFactors = False)
-    metabStudyDF <- data.frame(matrix(ncol = 7, nrow = 0), stringsAsFactors = False)
-    colnames(metabStudyDF) <- c("refmet_name", "study", "study_urls", "select", "kegg_id", "refmetname_url", "keggid_url")
+    # ---------------------------
+    # SECURITY: Normalize species
+    # ---------------------------
+    sp <- normalize_species(orgId)
+    organism_name <- sp$species_label # Human/Mouse/Rat
+    orgId_code <- sp$species_code # hsa/mmu/rno
+
+    # ---------------------------
+    # SECURITY: Load curated validation lists
+    # ---------------------------
+    allowed_diseases <- load_allowed_diseases("disease_pulldown_menu_cascaded.json")
+    allowed_anatomy <- load_allowed_anatomy("ssdm_sample_source_pulldown_menu.html")
+
+    # ---------------------------
+    # SECURITY: Validate disease / anatomy
+    # ---------------------------
+    diseaseId <- validate_disease(diseaseId, allowed_diseases)
+    anatomyId <- validate_anatomy(anatomyId, allowed_anatomy)
+
+    # ---------------------------
+    # Initialize data structures
+    # ---------------------------
+    studiesTableDF <- data.frame(matrix(ncol = 3, nrow = 0), stringsAsFactors = FALSE)
+    metabStudyDF <- data.frame(matrix(ncol = 7, nrow = 0), stringsAsFactors = FALSE)
+    colnames(metabStudyDF) <- c(
+        "refmet_name", "study", "study_urls", "select",
+        "kegg_id", "refmetname_url", "keggid_url"
+    )
     metabStudyList <- list()
     metabList <- list()
 
+    # ---------------------------
     ## Get compounds and reactions for all genes.
+    # ---------------------------
     for (g in 1:length(geneArray)) {
-        queryStr <- paste0(orgId, ":", geneArray[g])
+        # SECURITY: Validate each gene ID
+        geneId <- validate_entrez_ids(geneArray[g])
+
+        queryStr <- paste0(orgId_code, ":", geneId)
+
         if (preCompute == 1) {
             ## Get studies, reactions pertaining to compounds from RDS file
-            rdsFilename <- paste0("./data/", orgId, "_keggLink_mg.RDS")
-            all_df <- readRDS(rdsFilename)
-
+            # SECURITY: Use safe_read_rds from metgene_common.R
+            all_df <- safe_read_rds(orgId_code, "_keggLink_mg.RDS", base_dir = "data")
             df <- subset(all_df, org_ezid == queryStr)
         } else {
-             # df <- keggLink(queryStr) # keggLink interface has changed
             df <- getCpdIDsFromKEGG(queryStr)
         }
+
         # All compounds pertaining to the gene are prefixed by cpd:
         cpds <- df[str_detect(df[, 2], "cpd:"), 2]
         # Prune the prefixes so that the list comprises of only the ids
@@ -114,39 +165,100 @@ getMetaboliteStudiesForGene <- function(orgId, geneArray, diseaseId, anatomyId, 
 
     metabList <- unique(metabList)
 
+    # ---------------------------
+    # SECURITY: URL encode anatomy and disease for MW REST API
+    # MW REST API expects %20 for spaces, not +
+    # ---------------------------
     anatomyQryStr <- anatomyId
     diseaseQryStr <- diseaseId
-    # https://metabolomicsworkbench.org/rest/metstat/;;;human;Fibroblast%20cells;;C00031 works 
-    # but https://metabolomicsworkbench.org/rest/metstat/;;;human;Fibroblast+cells;;C00031 does not
-    # PHP encodes space to + so we have to replace it by %20
-    pat_str = "\\+"; rep_str = "%20";
-    #if (!is_empty(anatomyId) && length(anatomyId) > 0 && str_detect(anatomyId, "\\+")) {
-    #    anatomyQryStr <- str_replace_all(anatomyId, "\\+", "%20")
-    if (!is_empty(anatomyId) && length(anatomyId) > 0 && str_detect(anatomyId, pat_str)) {
-        anatomyQryStr <- str_replace_all(anatomyId, pat_str, rep_str)
+
+    # ---------------------------
+    # SECURITY: URL encode anatomy and disease for MW REST API
+    # MW REST API expects %20 for spaces, not +
+    # Handle both spaces and + characters
+    # ---------------------------
+
+    # Process anatomy
+    if (!is.null(anatomyId) && nzchar(anatomyId) && anatomyId != "NA") {
+        # First convert + to space (in case it came from URL encoding)
+        anatomyQryStr <- gsub("\\+", " ", anatomyId, fixed = FALSE)
+        # Then URL encode (converts spaces to %20)
+        anatomyQryStr <- URLencode(anatomyQryStr, reserved = TRUE)
+    } else {
+        anatomyQryStr <- ""
     }
 
-    if (!is_empty(diseaseId) && length(diseaseId) > 0 && str_detect(diseaseId, pat_str)) {
-        diseaseQryStr <- str_replace_all(diseaseId, pat_str, rep_str)
+    # Process disease
+    if (!is.null(diseaseId) && nzchar(diseaseId) && diseaseId != "NA") {
+        # First convert + to space (in case it came from URL encoding)
+        diseaseQryStr <- gsub("\\+", " ", diseaseId, fixed = FALSE)
+        # Then URL encode (converts spaces to %20)
+        diseaseQryStr <- URLencode(diseaseQryStr, reserved = TRUE)
+    } else {
+        diseaseQryStr <- ""
     }
-
+    # ---------------------------
+    # Process each metabolite
+    # ---------------------------
     if (length(metabList) > 0) {
         for (m in 1:length(metabList)) {
             metabStr <- metabList[[m]]
-            #     print(metabStr);
 
             ## Need this to get RefMet Names, study-ids, study titles
-            #      tic("Time taken for studies info per compound")
             # /rest/metstat/<ANALYSIS_TYPE>;<POLARITY>;<CHROMATOGRAPHY>;<SPECIES>;<SAMPLE SOURCE>;<DISEASE>;<KEGG_ID>;<REFMET_NAME>
             #  metabStr is KEGG_ID
-            #            path = paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;", organism_name, ";", anatomyQryStr, ";", diseaseQryStr, ";", metabStr);
-            path <- paste0("https://www.metabolomicsworkbench.org/rest/metstat/;;;", organism_name, ";", anatomyQryStr, ";", diseaseQryStr, ";", metabStr)
-            #print(path)
-            jslist <- read_json(path, simplifyVector = TRUE)
-            #      toc()
+            path <- paste0(
+                "https://www.metabolomicsworkbench.org/rest/metstat/;;;",
+                organism_name, ";",
+                anatomyQryStr, ";",
+                diseaseQryStr, ";",
+                metabStr
+            )
+            # print(path)
+            # SECURITY: Wrap REST API call in tryCatch
+            jslist <- tryCatch(
+                read_json(path, simplifyVector = TRUE),
+                error = function(e) {
+                    warning("MW REST API failed for ", metabStr, ": ", e$message)
+                    return(list())
+                }
+            )
+
             respDF <- list_of_list_to_df(jslist)
+
+            if (is.null(respDF)) {
+                # No response - create empty entry
+                kegg_id <- metabStr
+                # SECURITY: Escape metabolite ID for HTML
+                keggid_url <- paste0(
+                    "<a href=\"https://www.genome.jp/entry/cpd:",
+                    html_escape(metabStr),
+                    "\">",
+                    html_escape(metabStr),
+                    "</a>"
+                )
+                refmet_name <- ""
+                refmetname_url <- " "
+                study <- ""
+                study_urls <- "No studies found"
+                select <- ""
+
+                result_df <- data.frame(
+                    kegg_id = kegg_id,
+                    refmet_name = refmet_name,
+                    study = study,
+                    study_urls = study_urls,
+                    keggid_url = keggid_url,
+                    refmetname_url = refmetname_url,
+                    select = select,
+                    stringsAsFactors = FALSE
+                )
+                metabStudyDF <- rbind(metabStudyDF, result_df)
+                next
+            }
+
             mydf_studies <- respDF[, c("refmet_name", "kegg_id", "study", "study_title")]
-            # print(nrow(mydf_studies))
+
             # SUMANA ADDED March 21 - remove duplicate studies
             if (!is.null(mydf_studies) && nrow(mydf_studies) > 0) {
                 mydf_studies <- mydf_studies %>%
@@ -155,82 +267,178 @@ getMetaboliteStudiesForGene <- function(orgId, geneArray, diseaseId, anatomyId, 
                     select(refmet_name, kegg_id, study, study_title)
             }
 
-            if (!is.null(mydf_studies)) {
+            if (!is.null(mydf_studies) && nrow(mydf_studies) > 0) {
                 ##      multiple refmet IDs case, loop through and create an entry for each variant
 
-                url_df <- mydf_studies %>% mutate(study_urls = paste0("<a href=\"https://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=", study, "\" target=\"blank\" title=\"", study_title, "\"> ", study, " </a>"))
+                # SECURITY: Escape all values for HTML output
+                url_df <- mydf_studies %>%
+                    mutate(
+                        study_urls = paste0(
+                            "<a href=\"https://www.metabolomicsworkbench.org/data/DRCCMetadata.php?Mode=Study&StudyID=",
+                            html_escape(study),
+                            "\" target=\"_blank\" title=\"",
+                            html_escape(study_title),
+                            "\"> ",
+                            html_escape(study),
+                            " </a>"
+                        )
+                    )
 
-                url_df <- url_df %>% mutate(keggid_url = paste0("<a href = \"https://www.genome.jp/entry/cpd:", kegg_id, "\">", kegg_id, "</a>"))
+                # SECURITY: Escape KEGG IDs for HTML
+                url_df <- url_df %>%
+                    mutate(
+                        keggid_url = paste0(
+                            "<a href=\"https://www.genome.jp/entry/cpd:",
+                            html_escape(kegg_id),
+                            "\">",
+                            html_escape(kegg_id),
+                            "</a>"
+                        )
+                    )
 
-                url_df <- url_df %>% mutate(refmetname_url = paste0("<a href=\"https://www.metabolomicsworkbench.org/databases/refmet/refmet_details.php?REFMET_NAME=", str_replace_all(refmet_name, c("\\+" = "%2b", " " = "+")), "\" target=\"_blank\"> ", refmet_name, "</a>"))
+                # SECURITY: URL encode RefMet names properly, escape for HTML
+                url_df <- url_df %>%
+                    mutate(
+                        refmetname_url = paste0(
+                            "<a href=\"https://www.metabolomicsworkbench.org/databases/refmet/refmet_details.php?REFMET_NAME=",
+                            str_replace_all(refmet_name, c("\\+" = "%2b", " " = "+")),
+                            "\" target=\"_blank\"> ",
+                            html_escape(refmet_name),
+                            "</a>"
+                        )
+                    )
+
                 refmetnameURLDF <- unique(url_df$refmetname_url)
                 keggidDF <- unique(url_df$kegg_id)
                 keggidURLDF <- unique(url_df$keggid_url)
-                result_df <- aggregate(cbind(study, study_urls) ~ refmet_name, data = url_df, FUN = function(x) c(paste(x, collapse = ", ")))
 
-                result_df <- result_df %>% mutate(select = paste0("<input type=\"checkbox\"/>"))
+                # Aggregate studies per RefMet name
+                result_df <- aggregate(
+                    cbind(study, study_urls) ~ refmet_name,
+                    data = url_df,
+                    FUN = function(x) paste(x, collapse = " ")
+                )
 
-                result_df <- cbind(result_df, kegg_id = keggidURLDF, refmetname_url = refmetnameURLDF, keggid_url = keggidURLDF)
+                result_df <- result_df %>%
+                    mutate(select = paste0("<input type=\"checkbox\"/>"))
 
+                result_df <- cbind(
+                    result_df,
+                    kegg_id = keggidURLDF,
+                    refmetname_url = refmetnameURLDF,
+                    keggid_url = keggidURLDF
+                )
 
-                metabStudyDF <- rbind(metabStudyDF, result_df)
-            } else {
-                # get metabolite name from KeGG
-                kegg_id <- metabStr
-                keggid_url <- paste0("<a href = \"https://www.genome.jp/entry/cpd:", metabStr, "\">", metabStr, "</a>")
-                refmet_name <- ""
-                refmetname_url <- " "
-                study <- ""
-
-                study_urls <- "No studies found"
-                select <- ""
-                result_df <- data.frame(kegg_id = kegg_id, refmet_name = refmet_name, study = study, study_urls = study_urls, keggid_url = keggid_url, refmetname_url = refmetname_url, select = select)
                 metabStudyDF <- rbind(metabStudyDF, result_df)
             }
         }
     }
 
-    vtFlag <- tolower(viewType)
+    # ---------------------------
+    # SECURITY: Validate view type
+    # ---------------------------
+    viewType <- safe_view_type(viewType)
 
-    if (vtFlag == "json") {
+    # ---------------------------
+    # Output section
+    # ---------------------------
+    if (viewType == "json") {
         studiesTableDF <- metabStudyDF[, c("kegg_id", "refmet_name", "study")]
         colnames(studiesTableDF) <- c("KEGG_COMPOUND_ID", "REFMET_NAME", "STUDY_ID")
-        studyJson <- toJSON(x = studiesTableDF, pretty = T)
+        studyJson <- toJSON(x = studiesTableDF, pretty = TRUE)
         return(cat(toString(studyJson)))
-    } else if (vtFlag == "txt") {
+    } else if (viewType == "txt") {
         studiesTableDF <- metabStudyDF[, c("kegg_id", "refmet_name", "study")]
         colnames(studiesTableDF) <- c("KEGG_COMPOUND_ID", "REFMET_NAME", "STUDY_ID")
         return(cat(format_csv(studiesTableDF)))
     } else {
+        # HTML output
         if (nrow(metabStudyDF) > 0) {
             tableDF <- metabStudyDF[, c("select", "kegg_id", "refmetname_url", "study_urls")]
             tableDF$study_urls <- gsub(",", "", tableDF$study_urls)
-            colnames(tableDF) <- c("SELECT", "KEGGMETABID", "REFMETNAME", "STUDIES")
+            colnames(tableDF) <- c("&#10003;", "KEGG ID", "REFMETNAME", "STUDIES")
             nprint <- nrow(tableDF)
-            return(print(xtable(tableDF[1:nprint, ]), type = "html", include.rownames = FALSE, sanitize.text.function = function(x) {
-                x
-            }, html.table.attributes = "id='Table1' class='styled-table'"))
+
+            return(
+                print(
+                    xtable(tableDF[1:nprint, ]),
+                    type = "html",
+                    include.rownames = FALSE,
+                    sanitize.text.function = function(x) x, # Don't double-escape
+                    html.table.attributes = "id='Table1' class='styled-table'"
+                )
+            )
         } else {
-            return(print(paste0(" Does not code for metabolites")))
+            return(print(paste0("Does not code for metabolites")))
         }
     }
 }
 
-
+###############################################################
+# Main script entry
+###############################################################
 args <- commandArgs(TRUE)
+
+# SECURITY: Validate argument count
+if (length(args) < 5) {
+    write(
+        "Usage: extractFilteredStudiesInfo.R <species> <geneArray> <diseaseStr> <anatomyStr> <viewTypeStr>",
+        stderr()
+    )
+    quit(status = 1)
+}
+
 species <- args[1]
-geneArray <- as.vector(strsplit(args[2], split = ",", fixed = TRUE)[[1]])
-diseaseStr <- args[3]
-anatomyStr <- args[4]
+geneArrayStr <- args[2]
+diseaseStr <- clean_php_input(args[3])
+anatomyStr <- clean_php_input(args[4])
 viewTypeStr <- args[5]
-## geneArray <- c(3098,229);
+
+# SECURITY: Parse and validate gene array
+# Split by comma, trim whitespace, validate each ID
+geneArray <- as.vector(strsplit(geneArrayStr, split = ",", fixed = TRUE)[[1]])
+geneArray <- trimws(geneArray)
+geneArray <- geneArray[geneArray != ""] # Remove empty strings
+
+if (length(geneArray) == 0) {
+    write("ERROR: No valid gene IDs provided", stderr())
+    quit(status = 1)
+}
+
+# SECURITY: Validate each gene ID individually
+for (i in seq_along(geneArray)) {
+    tryCatch(
+        {
+            geneArray[i] <- validate_entrez_ids(geneArray[i])
+        },
+        error = function(e) {
+            write(paste("ERROR: Invalid gene ID:", geneArray[i], "-", e$message), stderr())
+            quit(status = 1)
+        }
+    )
+}
+
+# Handle "NA" strings for disease and anatomy
 if (diseaseStr == "NA") {
     diseaseStr <- ""
 }
 if (anatomyStr == "NA") {
     anatomyStr <- ""
 }
-#print(paste0("Anatomy Str = ", anatomyStr))
-# tic("Time elapsed = ")
-outhtml <- getMetaboliteStudiesForGene(species, geneArray, diseaseStr, anatomyStr, viewTypeStr)
-# toc()
+
+# SECURITY: Wrap main execution in tryCatch
+tryCatch(
+    {
+        outhtml <- getMetaboliteStudiesForGene(
+            species,
+            geneArray,
+            diseaseStr,
+            anatomyStr,
+            viewTypeStr
+        )
+    },
+    error = function(e) {
+        write(paste("ERROR:", e$message), stderr())
+        quit(status = 1)
+    }
+)

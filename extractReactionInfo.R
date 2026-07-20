@@ -7,7 +7,7 @@
 # Output: A table in json or txt format comprising of reaction information
 #         or html table (if viewType is neither json or txt).
 #         The table contains KEGG_REACTION_ID, KEGG_REACTION_NAME KEGG_REACTION_EQUATION
-
+#
 ################################################
 # Restrictions due to the use of KEGG APIs (https://www.kegg.jp/kegg/legal.html see also https://www.pathway.jp/en/academic.html)
 # * Using this code to provide user's own web service. The code we provide is free for non-commercial use (see LICENSE).
@@ -27,138 +27,187 @@
 # to run them.
 # Please see the files README.md and LICENSE for more details.
 ################################################
-# source("libPathKEGGREST.R") # nolint: spaces_inside_linter, line_length_linter.
-library(KEGGREST)
-library(stringr)
-library(data.table)
-library(xtable)
-library(jsonlite)
-library(tidyverse)
-library(plyr)
-library(tictoc)
 
-# setting the precompute flag
+suppressPackageStartupMessages({
+  library(KEGGREST)
+  library(stringr)
+  library(data.table)
+  library(xtable)
+  library(jsonlite)
+  library(tidyverse)
+  library(plyr)
+  library(tictoc)
+})
+
+# SECURITY: Load common validation functions
+source("metgene_common.R")
+
+# Load the preCompute flag
 source("setPrecompute.R")
-getRxnIDsFromKEGG <- function(queryStr) { # nolint
-  # Fetch enzyme information                                                                                                                                      # nolint
-  enzyme <- keggGet(queryStr)[[1]]$ORTHOLOGY[[1]]
 
-  # Extract EC number
+# -------------------------- Helper Functions -----------------------------
+
+getRxnIDsFromKEGG <- function(queryStr) {
+  res <- tryCatch(keggGet(queryStr), error = function(e) {
+    stop("KEGG query failed for ", queryStr, ": ", e$message, call. = FALSE)
+  })
+
+  if (length(res) == 0 || is.null(res[[1]])) {
+    stop("No KEGG entry found for ", queryStr, call. = FALSE)
+  }
+
+  entry <- res[[1]]
+  if (is.null(entry$ORTHOLOGY) || length(entry$ORTHOLOGY) < 1) {
+    stop("No ORTHOLOGY for ", queryStr, call. = FALSE)
+  }
+
+  enzyme <- entry$ORTHOLOGY[[1]]
   ec_number <- regmatches(enzyme, regexpr("EC:\\d+\\.\\d+\\.\\d+\\.\\d+", enzyme))
-  ec_number <- tolower(ec_number) # Convert to lowercase (ec: format)
 
-  # Get reaction IDs
-  rxns <- keggLink("reaction", ec_number)
-  rxns <- unname(rxns) # Remove names
-  rxn_vec <- as.vector(rxns) # Convert to vector
+  if (length(ec_number) == 0) {
+    stop("No EC number for ", queryStr, call. = FALSE)
+  }
 
-  # Create a dataframe with reactions and labels
-  reaction_labels <- paste("reaction", seq_along(rxn_vec)) # Generate "reaction #"
-  rxn_df <- data.frame(Reaction = reaction_labels, Reaction_ID = rxn_vec, stringsAsFactors = FALSE) # DataFrame creation
+  ec_number <- tolower(ec_number)
 
-  return(rxn_df)
+  rxns <- tryCatch(keggLink("reaction", ec_number), error = function(e) {
+    stop("keggLink failed for ", ec_number, ": ", e$message, call. = FALSE)
+  })
+
+  if (length(rxns) == 0) {
+    stop("No reactions linked to EC ", ec_number, call. = FALSE)
+  }
+
+  rxn_vec <- unname(as.vector(rxns))
+  reaction_labels <- paste0("reaction", seq_along(rxn_vec))
+
+  data.frame(
+    Reaction = reaction_labels,
+    Reaction_ID = rxn_vec,
+    stringsAsFactors = FALSE
+  )
 }
+
+# ---------------------- Main Reaction Processing -------------------------
 
 getReactionInfoTable <- function(orgStr, geneIdStr, viewType) {
   queryStr <- paste0(orgStr, ":", geneIdStr)
 
+  # Step 1: Get reaction IDs
   if (preCompute == 1) {
-    # Load RDS file containing keggLink information
-
-    rdsFilename <- paste0("./data/", orgStr, "_keggLink_mg.RDS")
-    all_df <- readRDS(rdsFilename)
-
-    # obtain the information for the species:gene
+    # SECURITY: Use safe_read_rds from metgene_common.R
+    all_df <- safe_read_rds(orgStr, "_keggLink_mg.RDS", base_dir = "data")
     df <- subset(all_df, org_ezid == queryStr)
+
+    if (nrow(df) == 0) {
+      stop("No precomputed data for ", queryStr, call. = FALSE)
+    }
   } else {
     df <- getRxnIDsFromKEGG(queryStr)
   }
-  # obtain reaction information
-  rxns <- df[str_detect(df[, 2], "rn:"), 2]
 
-  # obtain only the reaction IDs
-  rxnList <- as.vector(gsub("rn:", "", rxns))
-  # print(rxnList)
+  rxn_col <- df[, 2]
+  rxns <- rxn_col[str_detect(rxn_col, "rn:")]
+  if (length(rxns) == 0) stop("No rn:xxx reactions for ", queryStr)
+
+  rxnList <- unique(gsub("^rn:", "", rxns))
+
   if (preCompute == 1) {
-    # Load RDS file for reaction info and get it for rxnList
-    rxnInfodf <- readRDS(paste0("./data/", orgStr, "_keggGet_rxnInfo.RDS"))
-    # rxnList <- eval(parse(text = rxnList))
-    rxndf <- rxnInfodf[rownames(rxnInfodf) %in% rxnList, ]
-    # print(head(rxndf))
-    # rxndf <- data.frame(lapply(rxndf, function(x) gsub("\"", "", x)))
+    # SECURITY: Use safe_read_rds from metgene_common.R
+    rxnInfodf <- safe_read_rds(orgStr, "_keggGet_rxnInfo.RDS", base_dir = "data")
+    rxndf <- rxnInfodf[rownames(rxnInfodf) %in% rxnList, , drop = FALSE]
+
+    if (nrow(rxndf) == 0) stop("No precomputed reaction info found.")
   } else {
-    # Step 1: Split the rxnList into smaller lists for batch processing
     query_split <- split(rxnList, ceiling(seq_along(rxnList) / 10))
-    # Step 2: Use lapply to process each batch
+
     info <- llply(query_split, function(x) {
-      keggGet(as.vector(x))
+      tryCatch(keggGet(as.vector(x)),
+        error = function(e) {
+          stop("keggGet failed for: ", paste(x, collapse = ","), call. = FALSE)
+        }
+      )
     })
-    # Step 3: Flatten the list if necessary
+
     unlist_info <- unlist(info, recursive = FALSE)
 
-    # Step 4: Extract specific columns (ENTRY, NAME, DEFINITION) from the keggGet results
-    # extract_info <- lapply(unlist_info, function(x) {
-    #   # Extract the ENTRY, NAME, and DEFINITION information
-    #   c(ENTRY = x$ENTRY, NAME = x$NAME, DEFINITION = x$DEFINITION)
-    # })
     extract_info <- lapply(unlist_info, function(entry) {
       list(
-        ENTRY = if (!is.null(entry$ENTRY)) entry$ENTRY else "",
-        NAME = if (!is.null(entry$NAME)) paste(entry$NAME, collapse = "; ") else "",
+        ENTRY      = if (!is.null(entry$ENTRY)) entry$ENTRY else "",
+        NAME       = if (!is.null(entry$NAME)) paste(entry$NAME, collapse = "; ") else "",
         DEFINITION = if (!is.null(entry$DEFINITION)) entry$DEFINITION else ""
       )
     })
 
-    # Step 5: Combine the extracted information into a data frame
-    dd <- do.call(rbind, extract_info)
-    rxndf <- as.data.frame(dd)
-
-    # Step 6: Clean the data frame (remove quotes if present)
+    rxndf <- as.data.frame(do.call(rbind, extract_info), stringsAsFactors = FALSE)
     rxndf <- data.frame(lapply(rxndf, function(x) gsub("\"", "", x)))
   }
-  # print(head(rxndf))
-  # Add additional KEGG_REACTION_URL for html display
-  if (nrow(rxndf) == 0) {
-    stop("No reactions found for the provided gene ID.")
-  }
+
   colnames(rxndf) <- c("KEGG_REACTION_ID", "KEGG_REACTION_NAME", "KEGG_REACTION_EQN")
-  rxndf$KEGG_REACTION_URL <- paste0("<a href=\"https://www.genome.jp/entry/rn:", rxndf$KEGG_REACTION_ID, "\" target=\"_blank\">", rxndf$KEGG_REACTION_ID, "</a>")
-  #  print(rxndf)
-  # print(rxndf)
 
+  # SECURITY: Use html_escape from metgene_common.R
+  rxndf$KEGG_REACTION_URL <- paste0(
+    "<a href=\"https://www.genome.jp/entry/rn:",
+    html_escape(rxndf$KEGG_REACTION_ID), "\" target=\"_blank\">",
+    html_escape(rxndf$KEGG_REACTION_ID), "</a>"
+  )
 
-  vtFlag <- tolower(viewType)
-
-  if (vtFlag == "json") {
-    newdf <- rxndf[, c("KEGG_REACTION_ID", "KEGG_REACTION_NAME", "KEGG_REACTION_EQN")]
-    newdf <- cbind(Gene = geneIdStr, newdf)
-    rxnJson <- toJSON(x = newdf, pretty = T)
-    return(cat(toString(rxnJson)))
-  } else if (vtFlag == "txt") {
-    newdf <- rxndf[, c("KEGG_REACTION_ID", "KEGG_REACTION_NAME", "KEGG_REACTION_EQN")]
-    newdf <- cbind(Gene = geneIdStr, newdf)
-    return(cat(format_csv(newdf)))
-  } else {
-    newdf <- rxndf[, c("KEGG_REACTION_URL", "KEGG_REACTION_NAME", "KEGG_REACTION_EQN")]
-    # Force list columns to character vectors
-    # print(head(newdf))
-
-    colnames(newdf) <- c("KEGG_REACTION_ID", "KEGG_REACTION_NAME", "KEGG_REACTION_EQN")
-    nprint <- nrow(newdf)
-
-    tableprint <- xtable(newdf[1:nprint, ])
-    tableAttr <- paste0("id = 'Gene", geneIdStr, "Table' class='styled-table'")
-    return(print(xtable(newdf[1:nprint, ]), type = "html", include.rownames = FALSE, sanitize.text.function = function(x) {
-      x
-    }, html.table.attributes = tableAttr))
+  # JSON output
+  if (viewType == "json") {
+    newdf <- cbind(Gene = geneIdStr, rxndf[, 1:3])
+    cat(toJSON(newdf, pretty = TRUE))
+    return(invisible(NULL))
   }
+
+  # TXT output
+  if (viewType == "txt") {
+    newdf <- cbind(Gene = geneIdStr, rxndf[, 1:3])
+    cat(format_csv(newdf))
+    return(invisible(NULL))
+  }
+
+  # HTML table output
+  # SECURITY: Escape NAME and EQN fields
+  newdf <- data.frame(
+    KEGG_REACTION_ID = rxndf$KEGG_REACTION_URL, # Already contains escaped HTML
+    KEGG_REACTION_NAME = html_escape(rxndf$KEGG_REACTION_NAME),
+    KEGG_REACTION_EQN = html_escape(rxndf$KEGG_REACTION_EQN),
+    stringsAsFactors = FALSE
+  )
+
+  # SECURITY: Sanitize gene ID for use in HTML attribute
+  safe_gene <- gsub("[^A-Za-z0-9_-]", "_", geneIdStr)
+  tableAttr <- paste0('id="Gene', safe_gene, 'Table" class="styled-table"')
+
+  html <- capture.output(
+    print(
+      xtable(newdf),
+      type = "html",
+      include.rownames = FALSE,
+      sanitize.text.function = function(x) x, # Don't double-escape
+      html.table.attributes = tableAttr
+    )
+  )
+  cat(paste(html, collapse = "\n"))
+  invisible(NULL)
 }
 
+# ------------------------------- MAIN --------------------------------------
+
 args <- commandArgs(TRUE)
-species <- args[1]
-geneStr <- args[2]
-viewType <- args[3]
-## print(jsonFlag);
-# tic()
-outhtml <- getReactionInfoTable(species, geneStr, viewType)
-# toc() # nolint
+
+if (length(args) < 3) {
+  write("Usage: extractReactionInfo.R <species> <geneStr> <viewType>", stderr())
+  quit(status = 1)
+}
+
+# SECURITY: Validate ALL inputs using metgene_common.R functions
+species_info <- normalize_species(args[1])
+species <- species_info$species_code
+
+geneStr <- validate_entrez_ids(args[2])
+
+viewType <- safe_view_type(args[3])
+
+# Execute main function
+getReactionInfoTable(species, geneStr, viewType)

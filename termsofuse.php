@@ -1,38 +1,99 @@
-<!DOCTYPE html>
-<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
-<?php
-  session_start();
-  $species=(isset($_SESSION['species']))?$_SESSION['species']:'';
-  $geneList=(isset($_SESSION['geneList']))?$_SESSION['geneList']:'';
-  $disease=(isset($_SESSION['disease']))?$_SESSION['disease']:'';
-  $anatomy=(isset($_SESSION['anatomy']))?$_SESSION['anatomy']:'';
-  $phenotype=(isset($_SESSION['phenotype']))?$_SESSION['phenotype']:'';
-?>
-<head><title>Terms of Use</title>		
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<link rel="apple-touch-icon" sizes="180x180" href="/MetGENE/apple-touch-icon.png">
-<link rel="icon" type="image/png" sizes="32x32" href="/MetGENE/favicon-32x32.png">
-<link rel="icon" type="image/png" sizes="16x16" href="/MetGENE/favicon-16x16.png">
-<link rel="manifest" href="/MetGENE/site.webmanifest">
-<?php include($_SERVER['DOCUMENT_ROOT'] . "/MetGENE/nav.php");?>
-</head>
-<body>
-
-
-<div id="constrain">
-<div class="constrain">
-<br>
-<br>
-
-<h1>Terms of Use</h1>
-<p style="margin:25px;">
-MetGENE tool is provided by the Metabolomics Workbench Data Coordination Center (DCC) of the NIH Common Fund Data Ecosystem (CFDE) on an "as is" basis, without warranty or representation of any kind, express or implied. The content of the conversion tool is protected by international copyright, trademark and other laws. You may download outputs (such as tables and web pages) from this site for your personal, non-commercial use only, provided that you keep intact all authorship, copyright and other proprietary notices. If you use this tool, you accept these terms. MW DCC reserves the right to modify these terms at any time. 
-  </p>
-</div>
-</div>
-
-
-
-<?php include($_SERVER['DOCUMENT_ROOT'] . "/MetGENE/footer.php");?>
-<body>
-</html>
+<?php
+/**
+ * termsofuse.php - Terms of Use page
+ * Security hardened using metgene_common.php functions
+ */
+
+// SECURITY FIX: Start session and load helpers BEFORE any output
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+require_once(__DIR__ . "/metgene_common.php");
+
+// SECURITY FIX: Send security headers
+sendSecurityHeaders();
+
+// SECURITY FIX: Use getBaseDirName() function
+$base_dir = getBaseDirName();
+
+// Define esc() wrapper for convenience
+if (!function_exists('esc')) {
+    function esc(string $v): string {
+        return escapeHtml($v);
+    }
+}
+
+/* Restore session variables (for navigation state) */
+$species   = $_SESSION['species']   ?? '';
+$geneList  = $_SESSION['geneList']  ?? '';
+$disease   = $_SESSION['disease']   ?? '';
+$anatomy   = $_SESSION['anatomy']   ?? '';
+$phenotype = $_SESSION['phenotype'] ?? '';
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>MetGENE: Terms of Use</title>
+
+<link rel="apple-touch-icon" sizes="180x180" href="<?= esc($base_dir) ?>/images/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="<?= esc($base_dir) ?>/images/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="<?= esc($base_dir) ?>/images/favicon-16x16.png">
+<link rel="manifest" href="<?= esc($base_dir) ?>/site.webmanifest">
+
+<?php
+// SECURITY FIX: Validate nav.php path with realpath
+$nav_file = realpath(__DIR__ . '/nav.php');
+if ($nav_file !== false && strpos($nav_file, __DIR__) === 0 && is_readable($nav_file)) {
+    include $nav_file;
+}
+?>
+
+<style>
+#constrain {
+    max-width: 950px;
+    margin: auto;
+}
+h1 { 
+    margin-top: 30px; 
+}
+p { 
+    font-size: 16px; 
+    line-height: 1.5; 
+}
+</style>
+</head>
+
+<body>
+
+<div id="constrain">
+    <div class="constrain">
+        <h1>Terms of Use</h1>
+
+        <p style="margin:25px;">
+            MetGENE tool is provided by the Metabolomics Workbench Data Coordination Center (DCC)
+            of the NIH Common Fund Data Ecosystem (CFDE) on an "as is" basis, without warranty or
+            representation of any kind, express or implied. The content of the tool is protected by
+            international copyright, trademark and other laws.
+            <br><br>
+            You may download outputs (such as tables and web pages) from this site for your personal,
+            non-commercial use only, provided that you keep intact all authorship, copyright and
+            other proprietary notices.
+            <br><br>
+            If you use this tool, you accept these terms. MW DCC reserves the right to modify these
+            terms at any time.
+        </p>
+    </div>
+</div>
+
+<?php
+// SECURITY FIX: Validate footer.php path with realpath
+$footer_file = realpath(__DIR__ . '/footer.php');
+if ($footer_file !== false && strpos($footer_file, __DIR__) === 0 && is_readable($footer_file)) {
+    include $footer_file;
+}
+?>
+
+</body>
+</html>
