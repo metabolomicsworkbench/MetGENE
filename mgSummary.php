@@ -39,7 +39,7 @@ if (($geneSym === "" || $geneID === "") && $ensemblID !== "") {
 
     $cmd = buildRscriptCommand(
         "extractGeneIDsAndSymbols.R",
-        [$species, $ensemblID, "ENSEMBL", ($_SERVER['SERVER_NAME'] ?? "localhost")]
+        [$species, $ensemblID, "ENSEMBL", "bdcw.org"] // external geneid lookup API only exists at bdcw.org, not locally
     );
 
     $symbol_geneIDs = [];

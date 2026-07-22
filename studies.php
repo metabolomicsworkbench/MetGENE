@@ -31,7 +31,7 @@ $viewType = safeGet("viewType");
  $enc_disease = urlencode($disease);
  $anatomy = safeGet("anatomy");
  $enc_anatomy = urlencode($anatomy);
- $domainName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+ $domainName = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
  
  // SECURITY FIX: Use buildRscriptCommand for first R script
  $scriptPath1 = realpath(__DIR__ . "/extractGeneIDsAndSymbols.R");

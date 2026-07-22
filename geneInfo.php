@@ -154,7 +154,7 @@ if(isset($_SESSION['species']) && isset($_SESSION['geneArray']) && isset($_SESSI
 //    $gene_array = $_SESSION['geneArray'];
     $output = array();
     $htmlbuff = array();
-    $domainName = $_SERVER['SERVER_NAME'];
+    $domainName = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
 
     
 
