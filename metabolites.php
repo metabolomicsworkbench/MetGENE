@@ -31,7 +31,7 @@ if ($view_type === 'json' || $view_type === 'txt') {
     // SECURITY FIX: Validate gene ID type
     $gene_id_type = validateGeneIDType($gene_id_type);
 
-    $domain_name  = $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $domain_name  = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
 
     // Resolve gene IDs and symbols via Rscript (safely)
     $cmd = buildRscriptCommand('extractGeneIDsAndSymbols.R', [

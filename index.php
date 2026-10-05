@@ -142,7 +142,6 @@ foreach (["SYMBOL","SYMBOL_OR_ALIAS","ENTREZID","ENSEMBL","REFSEQ","UNIPROT"] as
 <td><center><img src="<?= $base_dir ?>/images/organisms.png" width="100"></center></td>
 <td><center><img src="<?= $base_dir ?>/images/anatomy.png" width="65"></center></td>
 <td><center><img src="<?= $base_dir ?>/images/disease.png" width="60"></center></td>
-<td><center><img src="<?= $base_dir ?>/images/phenotype.png" width="70"></center></td>
 </tr>
 
 <tr>
@@ -168,19 +167,11 @@ foreach (["SYMBOL","SYMBOL_OR_ALIAS","ENTREZID","ENSEMBL","REFSEQ","UNIPROT"] as
 <td>
 <center>
 <select name="disease_slim" id="disease_slim">
-<option value="">Select disease category</option>
+<option value="">Select disease/phenotype category</option>
 </select><br>
 
 <select name="disease" id="disease">
-<option value="NA" selected>Select disease</option>
-</select>
-</center>
-</td>
-
-<td>
-<center>
-<select name="phenotype">
-<option value="NA" selected>Select phenotype</option>
+<option value="NA" selected>Select disease/phenotype</option>
 </select>
 </center>
 </td>

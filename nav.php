@@ -127,7 +127,7 @@ $allowedAnatomy = loadAnatomyValuesFromHtml(__DIR__ . "/ssdm_sample_source_pulld
           $_SESSION['geneSymbols'] = '';
           $_SESSION['geneListArr'] = [];
       } else {
-          $domainName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+          $domainName = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
           
           $cmd = "/usr/bin/Rscript "
                . escapeshellarg($scriptPath) . " "

@@ -66,7 +66,7 @@ if ($view_type === 'json' || $view_type === 'txt') {
     }
     $gene_info_str = implode('__', $clean_genes);
 
-    $domain_name = $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $domain_name = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
 
     // ---- Call R script to map IDs <-> symbols securely ----
     $cmd = buildRscriptCommand('extractGeneIDsAndSymbols.R', [

@@ -54,7 +54,7 @@ if ($viewType === 'json' || $viewType === 'txt') {
     $cleanGenesArray = sanitizeGeneList($geneListRaw);
     $geneListClean   = implode('__', $cleanGenesArray);
 
-    $domainName = $_SERVER['SERVER_NAME'] ?? 'localhost';
+    $domainName = "bdcw.org"; // external geneid lookup API only exists at bdcw.org, not locally
 
     // ---- 1) Map input IDs → (symbols, internal IDs) via R ----
     $cmdIds = buildRscriptCommand(

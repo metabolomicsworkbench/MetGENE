@@ -1,0 +1,7 @@
+services:
+  metgene:
+    build: .
+    ports:
+      - "80:80"
+    volumes:
+      - ./cache:/var/www/html/MetGENE/cache
